@@ -87,12 +87,12 @@ Coming soon.
 
 <p align="center">
   <a href="https://salad-pan.github.io/assets/fig3.pdf">
-    <img src="https://salad-pan.github.io/assets/fig1-1.png" width="100%" />
+    <img src="https://salad-pan.github.io/assets/fig3-1.png" width="100%" />
   </a>
   <br>
   <em>Given a pan-ms pair as input, our method, SALAD-Pan, fine-tunes a pre-trained text-to-image diffusion model for pansharpening.</em>
   <a href="https://salad-pan.github.io/assets/fig4.pdf">
-    <img src="https://salad-pan.github.io/assets/fig1-1.png" width="100%" />
+    <img src="https://salad-pan.github.io/assets/fig4-1.png" width="100%" />
   </a>
   <em>Given a pan-ms pair as input, our method, SALAD-Pan, fine-tunes a pre-trained text-to-image diffusion model for pansharpening.</em>
 </p>
