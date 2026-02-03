@@ -87,80 +87,24 @@ Coming soon.
 
 <p align="center">
   <a href="https://salad-pan.github.io/assets/fig3.pdf">
-    <img src="https://salad-pan.github.io/assets/fig3-1.png" width="100%" />
+    <img src="https://salad-pan.github.io/assets/fig3-1.png" alt="Reduced Resolution" width="100%" />
   </a>
   <br>
-  <em>Given a pan-ms pair as input, our method, SALAD-Pan, fine-tunes a pre-trained text-to-image diffusion model for pansharpening.</em>
+  <em>Visual comparison on WorldView-3 (WV-3) and QuickBird (QB) dataset at reduced resolution.</em>
   <a href="https://salad-pan.github.io/assets/fig4.pdf">
-    <img src="https://salad-pan.github.io/assets/fig4-1.png" width="100%" />
+    <img src="https://salad-pan.github.io/assets/fig4-1.png" alt="Full Resolution" width="100%" />
   </a>
-  <em>Given a pan-ms pair as input, our method, SALAD-Pan, fine-tunes a pre-trained text-to-image diffusion model for pansharpening.</em>
+  <em>Visual comparison on WorldView-3 (WV-3) and QuickBird (QB) dataset at full resolution.</em>
 </p>
 
-<!-- <table class="center">
-<tr>
-  <td style="text-align:center;"><b>Input Video</b></td>
-  <td style="text-align:center;" colspan="3"><b>Output Video</b></td>
-</tr>
-<tr>
-  <td><img src="https://tuneavideo.github.io/assets/data/man-skiing.gif"></td>
-  <td><img src="https://tuneavideo.github.io/assets/results/tuneavideo/man-skiing/spiderman-beach.gif"></td>
-  <td><img src="https://tuneavideo.github.io/assets/results/tuneavideo/man-skiing/wonder-woman.gif"></td>              
-  <td><img src="https://tuneavideo.github.io/assets/results/tuneavideo/man-skiing/pink-sunset.gif"></td>
-</tr>
-<tr>
-  <td width=25% style="text-align:center;color:gray;">"A man is skiing"</td>
-  <td width=25% style="text-align:center;">"Spider Man is skiing on the beach, cartoon style”</td>
-  <td width=25% style="text-align:center;">"Wonder Woman, wearing a cowboy hat, is skiing"</td>
-  <td width=25% style="text-align:center;">"A man, wearing pink clothes, is skiing at sunset"</td>
-</tr>
+## Citation
 
-<tr>
-  <td><img src="https://tuneavideo.github.io/assets/data/rabbit-watermelon.gif"></td>
-  <td><img src="https://tuneavideo.github.io/assets/results/tuneavideo/rabbit-watermelon/rabbit.gif"></td>
-  <td><img src="https://tuneavideo.github.io/assets/results/tuneavideo/rabbit-watermelon/cat.gif"></td>              
-  <td><img src="https://tuneavideo.github.io/assets/results/tuneavideo/rabbit-watermelon/puppy.gif"></td>
-</tr>
-<tr>
-  <td width=25% style="text-align:center;color:gray;">"A rabbit is eating a watermelon on the table"</td>
-  <td width=25% style="text-align:center;">"A rabbit is <del>eating a watermelon</del> on the table"</td>
-  <td width=25% style="text-align:center;">"A cat with sunglasses is eating a watermelon on the beach"</td>
-  <td width=25% style="text-align:center;">"A puppy is eating a cheeseburger on the table, comic style"</td>
-</tr>
-
-<tr>
-  <td><img src="https://tuneavideo.github.io/assets/data/car-turn.gif"></td>
-  <td><img src="https://tuneavideo.github.io/assets/results/tuneavideo/car-turn/porsche-beach.gif"></td>
-  <td><img src="https://tuneavideo.github.io/assets/results/tuneavideo/car-turn/car-cartoon.gif"></td>              
-  <td><img src="https://tuneavideo.github.io/assets/results/tuneavideo/car-turn/car-snow.gif"></td>
-</tr>
-<tr>
-  <td width=25% style="text-align:center;color:gray;">"A jeep car is moving on the road"</td>
-  <td width=25% style="text-align:center;">"A Porsche car is moving on the beach"</td>
-  <td width=25% style="text-align:center;">"A car is moving on the road, cartoon style"</td>
-  <td width=25% style="text-align:center;">"A car is moving on the snow"</td>
-</tr>
-
-<tr>
-  <td><img src="https://tuneavideo.github.io/assets/data/man-basketball.gif"></td>
-  <td><img src="https://tuneavideo.github.io/assets/results/tuneavideo/man-basketball/bond.gif"></td>
-  <td><img src="https://tuneavideo.github.io/assets/results/tuneavideo/man-basketball/astronaut.gif"></td>              
-  <td><img src="https://tuneavideo.github.io/assets/results/tuneavideo/man-basketball/lego.gif"></td>
-</tr>
-<tr>
-  <td width=25% style="text-align:center;color:gray;">"A man is dribbling a basketball"</td>
-  <td width=25% style="text-align:center;">"James Bond is dribbling a basketball on the beach"</td>
-  <td width=25% style="text-align:center;">"An astronaut is dribbling a basketball, cartoon style"</td>
-  <td width=25% style="text-align:center;">"A lego man in a black suit is dribbling a basketball"</td>
-</tr>
-</table> -->
-
-<!-- ## Citation
 If you make use of our work, please cite our paper.
-```bibtex``` -->
+
+```bibtex
+```
 
 ## Shoutouts
 
-- Built with [🤗 diffusers](https://github.com/huggingface/diffusers). Thanks for open-sourcing!.
-- UI: [Gradio](https://github.com/gradio-app/gradio).
-- Run demo locally: `python gradio_demo.py`
+- Built with [🤗 Diffusers](https://github.com/huggingface/diffusers). Thanks for open-sourcing!
+- The interactive demo is powered by [🤗 Gradio](https://github.com/gradio-app/gradio). Thanks for open-sourcing!
