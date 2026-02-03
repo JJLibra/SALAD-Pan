@@ -20,7 +20,7 @@ This repository is the official implementation of [SALAD-Pan]().
 
 <p align="center">
   <a href="https://salad-pan.github.io/assets/fig1.pdf">
-    <img src="https://salad-pan.github.io/assets/fig1-1.png" width="1080" />
+    <img src="https://salad-pan.github.io/assets/fig1-1.png" alt="Structure" width="100%" />
   </a>
   <br/>
   <em>Given a pan-ms pair as input, our method, SALAD-Pan, fine-tunes a pre-trained text-to-image diffusion model for pansharpening.</em>
@@ -85,15 +85,11 @@ Coming soon.
 
 ## Results
 
-<p align="center">
-  <a href="https://salad-pan.github.io/assets/fig3.pdf">
-    <img src="https://salad-pan.github.io/assets/fig3-1.png" alt="Figure 3" width="100%" />
-  </a>
-  <br>
-  <a href="https://salad-pan.github.io/assets/fig4.pdf">
-    <img src="https://salad-pan.github.io/assets/fig4-1.png" alt="Figure 4" width="100%" />
-  </a>
-</p>
+## Results
+
+[![RR](https://salad-pan.github.io/assets/fig3-1.png)](https://salad-pan.github.io/assets/fig3.pdf)
+
+[![FR](https://salad-pan.github.io/assets/fig4-1.png)](https://salad-pan.github.io/assets/fig4.pdf)
 
 <!-- <table class="center">
 <tr>
