@@ -24,6 +24,14 @@ This repository is the official implementation of [SALAD-Pan]().
 <em>Given a pan-ms pair as input, our method, SALAD-Pan, fine-tunes a pre-trained text-to-image diffusion model for pansharpening.</em>
 </p>
 
+<p align="center">
+  <a href="https://salad-pan.github.io/assets/fig1.pdf">
+    <img src="https://salad-pan.github.io/assets/fig1-1.png" width="1080" />
+  </a>
+  <br/>
+  <em>Given a pan-ms pair as input, our method, SALAD-Pan, fine-tunes a pre-trained text-to-image diffusion model for pansharpening.</em>
+</p>
+
 ## News
 <!-- ### 🚨 Announcing [](): A CVPR competition for AI-based xxxxxx! Submissions due xxx x. Don't miss out! 🤩  -->
 - [02/03/2026] Code will be released soon!
@@ -43,21 +51,28 @@ To enable xformers, set `enable_xformers_memory_efficient_attention=True`.
 
 ### Weights
 
-**[Stable Diffusion]** [Stable Diffusion](https://arxiv.org/abs/2112.10752) is a latent text-to-image diffusion model capable of generating photo-realistic images given any text input. The pre-trained Stable Diffusion models can be downloaded from Hugging Face (e.g., [Stable Diffusion v1-5](https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5)).
+We release **two-stage weights**:
 
-<!-- **[VAE]** [VAE]() xxx ...... -->
+- **Stage I (Band-VAE)**: a single-band VAE pretrained to build a compact latent space.  
+  - **[VAE]**: `models/vae.safetensors`. You can download it from [Hugging face](https://huggingface.co/xxfer/SALAD-Pan).
+
+- **Stage II (Latent Diffusion)**: a latent conditional diffusion model trained **on top of Stable Diffusion**, operating in the Band-VAE latent space with spatial-spectral conditioning.  
+  - **[Stable Diffusion]** [Stable Diffusion](https://arxiv.org/abs/2112.10752) is a latent text-to-image diffusion model capable of generating photo-realistic images given any text input. The pre-trained Stable Diffusion models can be downloaded from Hugging Face (e.g., [Stable Diffusion v1-5](https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5)).  
+  - **[Adapters]**: `models/adapters.pth`. You can download it from [Hugging face](https://huggingface.co/xxfer/SALAD-Pan).
 
 ## Usage
 
 ### Training
 
-, run this command:
+We train the model in **two stages**.
+
+- **Stage I (VAE pretraining)**
 
 ```bash
 accelerate launch train_vae.py --config configs/train_vae.yaml
 ```
 
-, run this command:
+- **Stage II (Diffusion + Adapter training)**
 
 ```bash
 accelerate launch train_diffusion.py --config configs/train_diffusion.yaml
@@ -75,6 +90,16 @@ Coming soon.
 ```
 
 ## Results
+
+<p align="center">
+  <a href="https://salad-pan.github.io/assets/fig3.pdf">
+    <img src="https://salad-pan.github.io/assets/fig3-1.png" width="1080" />
+  </a>
+  <br>
+  <a href="https://salad-pan.github.io/assets/fig4.pdf">
+    <img src="https://salad-pan.github.io/assets/fig4-1.png" width="1080" />
+  </a>
+</p>
 
 <!-- <table class="center">
 <tr>
