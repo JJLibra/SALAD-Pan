@@ -1,8 +1,8 @@
 # SALAD-Pan
 
-This repository is the official implementation of [SALAD-Pan](https://arxiv.org/abs/2212.11565).
+This repository is the official implementation of [SALAD-Pan]().
 
-**[SALAD-Pan: Sensor-Agnostic Latent Adaptive Diffusion for Pan-Sharpening](https://arxiv.org/abs/2212.11565)**
+**[SALAD-Pan: Sensor-Agnostic Latent Adaptive Diffusion for Pan-Sharpening]()**
 <br/>
 [Junjie Li](), 
 [Congyang Ou](), 
@@ -14,23 +14,21 @@ This repository is the official implementation of [SALAD-Pan](https://arxiv.org/
 <br/>
 
 <!-- [![Project Website](https://img.shields.io/badge/Project-Website-orange)]() -->
-[![arXiv](https://img.shields.io/badge/arXiv-2212.11565-b31b1b.svg)](https://arxiv.org/abs/2212.11565)
-[![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)]()
+[![arXiv](https://img.shields.io/badge/arXiv-2212.11565-b31b1b.svg)]()
+[![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/xxfer/SALAD-Pan)
 <!-- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)]() -->
 
-<!-- <p align="center">
-<img src="https://tuneavideo.github.io/assets/teaser.gif" width="1080px"/>  
+<p align="center">
+<img src="https://salad-pan.github.io/assets/fig1.pdf" width="1080px"/>
 <br>
 <em>Given a pan-ms pair as input, our method, SALAD-Pan, fine-tunes a pre-trained text-to-image diffusion model for pansharpening.</em>
-</p> -->
+</p>
 
-<!-- ## News
-### 🚨 Announcing [LOVEU-TGVE](https://sites.google.com/view/loveucvpr23/track4): A CVPR competition for AI-based video editing! Submissions due Jun 5. Don't miss out! 🤩 
-- [02/22/2023] Improved consistency using DDIM inversion.
-- [02/08/2023] [Colab demo](https://colab.research.google.com/github/showlab/Tune-A-Video/blob/main/notebooks/Tune-A-Video.ipynb) released!
-- [02/03/2023] Pre-trained Tune-A-Video models are available on [Hugging Face Library](https://huggingface.co/Tune-A-Video-library)!
-- [01/28/2023] New Feature: tune a video on personalized [DreamBooth](https://dreambooth.github.io/) models.
-- [01/28/2023] Code released! -->
+## News
+<!-- ### 🚨 Announcing [](): A CVPR competition for AI-based xxxxxx! Submissions due xxx x. Don't miss out! 🤩  -->
+- [02/03/2026] Code will be released soon!
+<!-- - [04/30/2026] Pre-trained SALAD-Pan models are available on [Hugging Face Library](https://huggingface.co/xxfer/SALAD-Pan)! -->
+<!-- - [05/01/2026] Code released! -->
 
 ## Setup
 
@@ -41,7 +39,7 @@ pip install -r requirements.txt
 ```
 
 Installing [xformers](https://github.com/facebookresearch/xformers) is highly recommended for more efficiency and speed on GPUs. 
-To enable xformers, set `enable_xformers_memory_efficient_attention=True` (default).
+To enable xformers, set `enable_xformers_memory_efficient_attention=True`.
 
 ### Weights
 
@@ -142,5 +140,6 @@ If you make use of our work, please cite our paper.
 
 ## Shoutouts
 
-- This code builds on [diffusers](https://github.com/huggingface/diffusers). Thanks for open-sourcing!
-<!-- - Thanks [gradio demo](). -->
+- Built with [🤗 diffusers](https://github.com/huggingface/diffusers). Thanks for open-sourcing!.
+- UI: [Gradio](https://github.com/gradio-app/gradio).
+- Run demo locally: `python gradio_demo.py`
