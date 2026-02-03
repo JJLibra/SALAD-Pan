@@ -4,13 +4,13 @@ This repository is the official implementation of [SALAD-Pan]().
 
 **[SALAD-Pan: Sensor-Agnostic Latent Adaptive Diffusion for Pan-Sharpening]()**
 <br/>
-[Junjie Li](), 
-[Congyang Ou](), 
-[Haokui Zhang](), 
-[Guoting Wei](), 
+[Junjie Li](https://scholar.google.com/citations?hl=en&user=Jo_8lVcAAAAJ), 
+[Congyang Ou](https://github.com/), 
+[Haokui Zhang](https://scholar.google.com/citations?hl=en&user=m3gPwCoAAAAJ), 
+[Guoting Wei](https://scholar.google.com/citations?hl=en&user=NW8rUFkAAAAJ), 
 [Shengqin Jiang](), 
-[Ying Li](),
-[Chunhua Shen]()
+[Ying Li](), 
+[Chunhua Shen](https://scholar.google.com/citations?hl=en&user=Ljk2BvIAAAAJ)
 <br/>
 
 <!-- [![Project Website](https://img.shields.io/badge/Project-Website-orange)]() -->
@@ -28,7 +28,7 @@ This repository is the official implementation of [SALAD-Pan]().
 
 ## News
 <!-- ### 🚨 Announcing [](): A CVPR competition for AI-based xxxxxx! Submissions due xxx x. Don't miss out! 🤩  -->
-- [02/03/2026] Code will be released soon!
+- [02/01/2026] Code will be released soon!
 <!-- - [04/30/2026] Pre-trained SALAD-Pan models are available on [Hugging Face Library](https://huggingface.co/xxfer/SALAD-Pan)! -->
 <!-- - [05/01/2026] Code released! -->
 
@@ -45,14 +45,12 @@ To enable xformers, set `enable_xformers_memory_efficient_attention=True`.
 
 ### Weights
 
-We release **two-stage weights**:
+We provide **two-stage checkpoints**:
 
-- **Stage I (Band-VAE)**: a single-band VAE pretrained to build a compact latent space.  
-  - **[VAE]**: `models/vae.safetensors`. You can download it from [Hugging face](https://huggingface.co/xxfer/SALAD-Pan).
-
-- **Stage II (Latent Diffusion)**: a latent conditional diffusion model trained **on top of Stable Diffusion**, operating in the Band-VAE latent space with spatial-spectral conditioning.  
-  - **[Stable Diffusion]** [Stable Diffusion](https://arxiv.org/abs/2112.10752) is a latent text-to-image diffusion model capable of generating photo-realistic images given any text input. The pre-trained Stable Diffusion models can be downloaded from Hugging Face (e.g., [Stable Diffusion v1-5](https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5)).  
-  - **[Adapters]**: `models/adapters.pth`. You can download it from [Hugging face](https://huggingface.co/xxfer/SALAD-Pan).
+- **Stage I (Band-VAE)**: `models/vae.safetensors` (download: [Hugging Face](https://huggingface.co/xxfer/SALAD-Pan))
+- **Stage II (Latent Diffusion)**: runs **on top of Stable Diffusion** in the Band-VAE latent space.  
+  - **Stable Diffusion base**: download from Hugging Face (e.g., [Stable Diffusion v1-5](https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5))  
+  - **Adapters**: `models/adapters.pth` (download: [Hugging Face](https://huggingface.co/xxfer/SALAD-Pan))
 
 ## Usage
 
