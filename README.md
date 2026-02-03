@@ -19,12 +19,6 @@ This repository is the official implementation of [SALAD-Pan]().
 <!-- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)]() -->
 
 <p align="center">
-<img src="https://salad-pan.github.io/assets/fig1.pdf" width="1080px"/>
-<br>
-<em>Given a pan-ms pair as input, our method, SALAD-Pan, fine-tunes a pre-trained text-to-image diffusion model for pansharpening.</em>
-</p>
-
-<p align="center">
   <a href="https://salad-pan.github.io/assets/fig1.pdf">
     <img src="https://salad-pan.github.io/assets/fig1-1.png" width="1080" />
   </a>
@@ -93,11 +87,11 @@ Coming soon.
 
 <p align="center">
   <a href="https://salad-pan.github.io/assets/fig3.pdf">
-    <img src="https://salad-pan.github.io/assets/fig3-1.png" width="1080" />
+    <img src="https://salad-pan.github.io/assets/fig3-1.png" alt="Figure 3" width="100%" />
   </a>
   <br>
   <a href="https://salad-pan.github.io/assets/fig4.pdf">
-    <img src="https://salad-pan.github.io/assets/fig4-1.png" width="1080" />
+    <img src="https://salad-pan.github.io/assets/fig4-1.png" alt="Figure 4" width="100%" />
   </a>
 </p>
 
