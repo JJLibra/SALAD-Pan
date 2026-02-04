@@ -94,6 +94,17 @@ Coming soon.
   <em>Visual comparison on WorldView-3 (WV-3) and QuickBird (QB) dataset at full resolution.</em>
 </p>
 
+### Inference speed
+
+| Diffusion-based Methods | Settings | Latency (s) ↓ |
+|---|---|---:|
+| PanDiff   | fp16 · 256×256 | 356.63 ± 1.98 |
+| SSDiff    | fp16 · 256×256 | 10.10 ± 0.21  |
+| SGDiff    | fp16 · 256×256 | 6.64 ± 0.09   |
+| SALAD-Pan | fp16 · 256×256 | 3.36 ± 0.07   |
+
+> Latency is reported as mean ± std over 10 runs (warmup=3), batch size=1, on <RTX 4090 GPU>.
+
 ## Citation
 
 If you make use of our work, please cite our paper.
