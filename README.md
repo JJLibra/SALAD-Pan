@@ -1,8 +1,8 @@
 # SALAD-Pan
 
-This repository is the official implementation of [SALAD-Pan]().
+This repository is the official implementation of [SALAD-Pan](https://arxiv.org/abs/2602.04473).
 
-**[SALAD-Pan: Sensor-Agnostic Latent Adaptive Diffusion for Pan-Sharpening]()**
+**[SALAD-Pan: Sensor-Agnostic Latent Adaptive Diffusion for Pan-Sharpening](https://arxiv.org/abs/2602.04473)**
 <br/>
 [Junjie Li](https://scholar.google.com/citations?hl=en&user=Jo_8lVcAAAAJ), 
 [Congyang Ou](https://github.com/ocy1), 
@@ -14,7 +14,7 @@ This repository is the official implementation of [SALAD-Pan]().
 <br/>
 
 [![Project Website](https://img.shields.io/badge/Project-Website-orange)](https://salad-pan.github.io)
-[![arXiv](https://img.shields.io/badge/arXiv-2212.11565-b31b1b.svg)]()
+[![arXiv](https://img.shields.io/badge/arXiv-2602.04473-b31b1b.svg)](https://arxiv.org/abs/2602.04473)
 [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/xxfer/SALAD-Pan)
 
 <p align="center">
@@ -36,7 +36,11 @@ This repository is the official implementation of [SALAD-Pan]().
 ### Requirements
 
 ```shell
+git clone https://github.com/JJLibra/SALAD-Pan.git
+cd SALAD-Pan
 pip install -r requirements.txt
+cd diffusers
+pip install -e .
 ```
 
 Installing [xformers](https://github.com/facebookresearch/xformers) is highly recommended for more efficiency and speed on GPUs. 
@@ -110,6 +114,15 @@ Coming soon.
 If you make use of our work, please cite our paper.
 
 ```bibtex
+@misc{li2026saladpansensoragnosticlatentadaptive,
+      title={SALAD-Pan: Sensor-Agnostic Latent Adaptive Diffusion for Pan-Sharpening}, 
+      author={Junjie Li and Congyang Ou and Haokui Zhang and Guoting Wei and Shengqin Jiang and Ying Li and Chunhua Shen},
+      year={2026},
+      eprint={2602.04473},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2602.04473}, 
+}
 ```
 
 ## Shoutouts
