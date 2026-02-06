@@ -50,10 +50,10 @@ To enable xformers, set `enable_xformers_memory_efficient_attention=True`.
 
 We provide **two-stage checkpoints**:
 
-- **Stage I (Band-VAE)**: `models/vae.safetensors` (download: [Hugging Face](https://huggingface.co/xxfer/SALAD-Pan))
+- **Stage I (Band-VAE)**: `checkpoints/vae.safetensors` (download: [Hugging Face](https://huggingface.co/xxfer/SALAD-Pan))
 - **Stage II (Latent Diffusion)**: runs **on top of Stable Diffusion** in the Band-VAE latent space.  
   - **Stable Diffusion base**: download from Hugging Face (e.g., [Stable Diffusion v1-5](https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5))  
-  - **Adapters**: `models/adapters.pth` (download: [Hugging Face](https://huggingface.co/xxfer/SALAD-Pan))
+  - **Adapters**: `checkpoints/adapters.pth` (download: [Hugging Face](https://huggingface.co/xxfer/SALAD-Pan))
 
 ## Usage
 
@@ -86,6 +86,8 @@ Coming soon.
 
 ## Results
 
+For more details, please visit this [website](https://salad-pan.github.io/).
+
 <p align="center">
   <a href="https://salad-pan.github.io/assets/fig3.pdf">
     <img src="https://salad-pan.github.io/assets/fig3-1.png" alt="Reduced Resolution" width="100%" />
@@ -100,12 +102,12 @@ Coming soon.
 
 ### Inference speed
 
-| Diffusion-based Methods | Settings | Latency (s) ↓ |
-|---|---|---:|
-| PanDiff   | fp16 · 256×256 | 356.63 ± 1.98 |
-| SSDiff    | fp16 · 256×256 | 10.10 ± 0.21  |
-| SGDiff    | fp16 · 256×256 | 6.64 ± 0.09   |
-| SALAD-Pan | fp16 · 256×256 | 3.36 ± 0.07   |
+| Diffusion-based Methods | Latency (s) ↓ |
+|---| ---:|
+| PanDiff   | 356.63 ± 1.98 |
+| SSDiff    | 10.10 ± 0.21  |
+| SGDiff    | 6.64 ± 0.09   |
+| SALAD-Pan | 3.36 ± 0.07   |
 
 > Latency is reported as mean ± std over 10 runs (warmup=3), batch size=1, on <RTX 4090 GPU>.
 
@@ -114,7 +116,7 @@ Coming soon.
 If you make use of our work, please cite our paper.
 
 ```bibtex
-@misc{li2026saladpansensoragnosticlatentadaptive,
+@misc{li2026_saladpan,
       title={SALAD-Pan: Sensor-Agnostic Latent Adaptive Diffusion for Pan-Sharpening}, 
       author={Junjie Li and Congyang Ou and Haokui Zhang and Guoting Wei and Shengqin Jiang and Ying Li and Chunhua Shen},
       year={2026},
