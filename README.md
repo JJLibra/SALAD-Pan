@@ -100,16 +100,16 @@ For more details, please visit this [website](https://salad-pan.github.io/).
   <em>Visual comparison on WorldView-3 (WV-3) and QuickBird (QB) dataset at full resolution.</em>
 </p>
 
-### Inference speed
+### Efficiency comparison (RR, QB)
 
-| Diffusion-based Methods | Latency (s) ↓ |
-|---| ---:|
-| PanDiff   | 356.63 ± 1.98 |
-| SSDiff    | 10.10 ± 0.21  |
-| SGDiff    | 6.64 ± 0.09   |
-| SALAD-Pan | 3.36 ± 0.07   |
+| Diffusion-based Methods |           SAM ↓ |         ERGAS ↓ |  NFE | Latency (s) ↓ |
+| ----------------------- | --------------: | --------------: | ---: | ------------: |
+| PanDiff                 |     4.575±0.255 |     3.742±0.353 | 1000 |   356.63±1.98 |
+| SSDiff                  |     4.464±0.747 |     3.632±0.275 |   10 |    10.10±0.21 |
+| SGDiff                  |     4.353±0.741 |     3.578±0.290 |   50 |     6.64±0.09 |
+| **SALAD-Pan**           | **4.198±0.526** | **3.251±0.288** |   20 | **3.36±0.07** |
 
-> Latency is reported as mean ± std over 10 runs (warmup=3), batch size=1, on <RTX 4090 GPU>.
+> Latency is reported as mean ± std over 10 runs (warmup=3), batch size=1, evaluated on the QB dataset under the reduced-resolution (RR) protocol, on an RTX 4090 GPU.
 
 ## Citation
 
