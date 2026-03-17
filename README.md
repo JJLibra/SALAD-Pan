@@ -28,8 +28,6 @@
   </a>
 </p>
 
-## Overview
-
 <p align="center">
   <a href="https://salad-pan.github.io/assets/fig1.pdf">
     <img src="https://salad-pan.github.io/assets/fig1.webp" alt="Structure" width="100%" />
