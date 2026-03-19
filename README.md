@@ -60,11 +60,25 @@ cd SALAD-Pan
 
 conda create -n saladpan python=3.10 -y
 conda activate saladpan
-pip install -r requirements.txt
 
 # This project depends on a modified local version of `diffusers` under `./diffusers`.
 cd diffusers
 pip install -e .
+
+cd ..
+pip install -r requirements.txt
+```
+
+And initialize an [🤗Accelerate](https://github.com/huggingface/accelerate/) environment with:
+
+```bash
+accelerate config
+```
+
+Or for a default accelerate configuration without answering questions about your environment
+
+```bash
+accelerate config default
 ```
 
 Installing [xformers](https://github.com/facebookresearch/xformers) is highly recommended for more efficiency and speed on GPUs. 
