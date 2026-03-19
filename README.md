@@ -81,9 +81,6 @@ Or for a default accelerate configuration without answering questions about your
 accelerate config default
 ```
 
-Installing [xformers](https://github.com/facebookresearch/xformers) is highly recommended for more efficiency and speed on GPUs. 
-To enable xformers, set `enable_xformers_memory_efficient_attention=True`.
-
 ### Weights
 
 We provide **two-stage checkpoints**:
@@ -122,11 +119,16 @@ Once the training is done, run inference:
 Coming soon.
 ```
 
+Installing [xformers](https://github.com/facebookresearch/xformers) is highly recommended for more efficiency and speed on GPUs. 
+To enable xformers, set `enable_xformers_memory_efficient_attention=True`.
+
 ## Results
 
 **🚨We strongly recommend that you visit this [website](https://salad-pan.github.io/) for a better reading experience.**
 
-<p><b>Table 1.</b> Quantitative results on the WorldView-3 (WV3) dataset. Best and second-best results are in <b>bold</b> and <u>underlined</u>.</p>
+### Quantitative Results
+
+<p><b>Table 1.</b> Quantitative results on the WorldView-3 (WV3) dataset. Best results are in <b>bold</b>.</p>
 
 <div style="overflow-x:auto; width:100%;">
   <table border="1" cellspacing="0" cellpadding="6" style="border-collapse:collapse; width:100%; min-width:980px; font-size:13px; white-space:nowrap;">
@@ -160,7 +162,7 @@ Coming soon.
 
 <br/>
 
-<p><b>Table 2.</b> Quantitative results on the QuickBird (QB) dataset. Best and second-best results are in <b>bold</b> and <u>underlined</u>.</p>
+<p><b>Table 2.</b> Quantitative results on the QuickBird (QB) dataset. Best results are in <b>bold</b>.</p>
 
 <div style="overflow-x:auto; width:100%;">
   <table border="1" cellspacing="0" cellpadding="6" style="border-collapse:collapse; width:100%; min-width:980px; font-size:13px; white-space:nowrap;">
@@ -194,7 +196,7 @@ Coming soon.
 
 <br/>
 
-<p><b>Table 3.</b> Quantitative results on the GaoFen-2 (GF2) dataset. Best and second-best results are in <b>bold</b> and <u>underlined</u>.</p>
+<p><b>Table 3.</b> Quantitative results on the GaoFen-2 (GF2) dataset. Best results are in <b>bold</b>.</p>
 
 <div style="overflow-x:auto; width:100%;">
   <table border="1" cellspacing="0" cellpadding="6" style="border-collapse:collapse; width:100%; min-width:980px; font-size:13px; white-space:nowrap;">
@@ -225,6 +227,8 @@ Coming soon.
     </tbody>
   </table>
 </div>
+
+### Qualitative Comparison
 
 <p align="center">
   <a href="https://salad-pan.github.io/assets/fig3.pdf">
