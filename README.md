@@ -38,7 +38,7 @@
 
 ## News
 <!-- ### 🚨 Announcing [](): A CVPR competition for AI-based xxxxxx! Submissions due xxx x. Don't miss out! 🤩  -->
-- [02/01/2026] Code will be released soon !
+- **[02/01/2026]** Code will be released soon !
 <!-- - [04/30/2026] Pre-trained SALAD-Pan models are available on [Hugging Face Library](https://huggingface.co/xxfer/SALAD-Pan)! -->
 <!-- - [05/01/2026] Code released! -->
 
