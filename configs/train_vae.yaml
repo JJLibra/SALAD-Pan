@@ -1,0 +1,84 @@
+pretrained_model_name_or_path: /base/stable-diffusion-v1-5
+output_dir: output/vae_c1_gf2_qb_wv3
+logging_dir: logs
+local_files_only: true
+
+seed: 2025
+
+train_h5_path: data/vae/train_gt_1ch_all.h5
+
+validation_h5_path: null
+validation_h5_path_gf2: data/gf2/valid_gf2.h5
+validation_h5_path_qb:  data/qb/valid_qb.h5
+validation_h5_path_wv3: data/wv3/valid_wv3.h5
+
+h5_keys:
+  gt: gt
+
+resolution: 128
+
+range_clip_min: 0
+range_clip_max: 2047
+discard_out_of_range: true
+max_train_samples: null
+
+range_clip_min_gf2: 0
+range_clip_max_gf2: 2047
+range_clip_min_qb: 0
+range_clip_max_qb: 2047
+range_clip_min_wv3: 0
+range_clip_max_wv3: 2047
+
+learning_rate: 3.0e-4
+train_batch_size: 24
+gradient_accumulation_steps: 2
+num_train_epochs: 50
+max_train_steps: null
+dataloader_num_workers: 4
+
+lr_scheduler: cosine           # linear|cosine|cosine_with_restarts|polynomial|constant|constant_with_warmup
+lr_warmup_steps: 100
+lr_num_cycles: 1
+lr_power: 1
+
+use_8bit_adam: false
+adam_beta1: 0.9
+adam_beta2: 0.999
+adam_weight_decay: 1.0e-2
+adam_epsilon: 1.0e-8
+
+allow_tf32: true
+scale_lr: false
+max_grad_norm: 1.0
+set_grads_to_none: false
+
+mixed_precision: bf16
+
+lambda_charbonnier: 1.2
+charbonnier_eps: 1.0e-3
+
+lambda_ssim: 1.75
+ssim_kernel: 11
+ssim_sigma: 1.5
+ssim_pool: 2
+
+lambda_mse: 1.0
+lambda_mae: 1.0
+lambda_psnr: 0.05
+
+sample_posterior: true
+train_first_last_only: false
+
+checkpointing_steps: 500
+checkpoints_total_limit: 10
+
+validation_steps: 500
+save_validation_rgb: true
+validation_fixed_first_n: 2
+validation_random_count: 50
+
+calibrate_scaling_factor: true
+calib_num_samples: 1024
+calib_batch_size: 32
+target_latent_std: 1.0
+scaling_factor_override: null
