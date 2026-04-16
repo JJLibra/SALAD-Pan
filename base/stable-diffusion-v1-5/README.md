@@ -1,0 +1,1 @@
+Please download from https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5
