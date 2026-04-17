@@ -33,18 +33,27 @@
     <img src="https://salad-pan.github.io/assets/fig1.webp" alt="Structure" width="100%" />
   </a>
   <br/>
-  <em>Given a PAN–LRMS image pair, SALAD-Pan fine-tunes a pre-trained diffusion model to generate a HRMS.</em>
+  <em>Given a PAN–LRMS image pair, SALAD-Pan fine-tunes a pre-trained diffusion model to generate a HRMS image.</em>
+</p>
+
+## Demo
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/salad-pan/salad-pan.github.io/main/public/assets/salad_pan_demo.jpg" alt="SALAD-Pan Demo" width="100%" />
+  <br/>
+  <em>Interactive demo of SALAD-Pan for pan-sharpening.</em>
 </p>
 
 ## News
 <!-- ### 🚨 Announcing [](): A CVPR competition for AI-based xxxxxx! Submissions due xxx x. Don't miss out! 🤩  -->
-- **[02/01/2026]** Code will be released soon !
+- **[02/01/2026]** Code will be released soon!
 <!-- - [04/30/2026] Pre-trained SALAD-Pan models are available on [Hugging Face Library](https://huggingface.co/xxfer/SALAD-Pan)! -->
 <!-- - [05/01/2026] Code released! -->
 
 ## Contents
 
 - [Setup](#setup)
+- [Demo](#demo)
 - [Usage](#usage)
 - [Results](#results)
 - [Citation](#citation)
@@ -69,13 +78,13 @@ cd ..
 pip install -r requirements.txt
 ```
 
-And initialize an [🤗Accelerate](https://github.com/huggingface/accelerate/) environment with:
+Initialize an [🤗 Accelerate](https://github.com/huggingface/accelerate/) environment with:
 
 ```bash
 accelerate config
 ```
 
-Or for a default accelerate configuration without answering questions about your environment
+Or use a default Accelerate configuration without answering environment questions:
 
 ```bash
 accelerate config default
@@ -85,10 +94,14 @@ accelerate config default
 
 We provide **two-stage checkpoints**:
 
-- **Stage I (Band-VAE)**: `checkpoints/vae.safetensors` (download: [Hugging Face](https://huggingface.co/xxfer/SALAD-Pan))
-- **Stage II (Latent Diffusion)**: runs **on top of Stable Diffusion** in the Band-VAE latent space.  
-  - **Stable Diffusion base**: download from Hugging Face (e.g., [Stable Diffusion v1-5](https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5))  
-  - **Adapters**: `checkpoints/adapters.pth` (download: [Hugging Face](https://huggingface.co/xxfer/SALAD-Pan))
+- **Stage I (Band-VAE)**: `checkpoints/vae.safetensors`
+  Download: [Hugging Face](https://huggingface.co/xxfer/SALAD-Pan)
+
+- **Stage II (Latent Diffusion)**: runs **on top of Stable Diffusion** in the Band-VAE latent space.
+
+  - **Stable Diffusion base**: download from Hugging Face (e.g., [Stable Diffusion v1-5](https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5))
+  - **Adapters**: `checkpoints/adapters.pth`
+    Download: [Hugging Face](https://huggingface.co/xxfer/SALAD-Pan)
 
 ## Usage
 
@@ -108,23 +121,22 @@ accelerate launch train_vae.py --config configs/train_vae.yaml
 accelerate launch train_diffusion.py --config configs/train_diffusion.yaml
 ```
 
-Note: Tuning usually takes `40k~50k` steps, about `1~2` days using eight RTX 4090 GPUs in fp16. 
-Reduce `batch_size` if your GPU memory is limited.
+> Note: Training usually takes `40k–50k` steps, which is about `1–2` days on eight RTX 4090 GPUs in fp16. Reduce `batch_size` if your GPU memory is limited.
 
 ### Inference
 
-Once the training is done, run inference:
+Once training is finished, run inference:
 
 ```python
 Coming soon.
 ```
 
-Installing [xformers](https://github.com/facebookresearch/xformers) is highly recommended for more efficiency and speed on GPUs. 
-To enable xformers, set `enable_xformers_memory_efficient_attention=True`.
+Installing [xformers](https://github.com/facebookresearch/xformers) is highly recommended for better GPU efficiency and speed.
+To enable it, set `enable_xformers_memory_efficient_attention=True`.
 
 ## Results
 
-**🚨We strongly recommend that you visit this [website](https://salad-pan.github.io/) for a better reading experience.**
+**🚨 We strongly recommend visiting our [project website](https://salad-pan.github.io/) for a better reading experience.**
 
 ### Quantitative Results
 
@@ -232,19 +244,21 @@ To enable xformers, set `enable_xformers_memory_efficient_attention=True`.
 
 <p align="center">
   <a href="https://salad-pan.github.io/assets/fig3.pdf">
-    <!-- <img src="https://salad-pan.github.io/assets/fig3-1.png" alt="Reduced Resolution" width="100%" /> -->
     <img src="https://salad-pan.github.io/assets/fig3.webp" alt="Reduced Resolution" width="100%" />
   </a>
   <br>
-  <em>Visual comparison on WorldView-3 (WV-3) and QuickBird (QB) dataset at reduced resolution.</em>
-  <a href="https://salad-pan.github.io/assets/fig4.pdf">
-    <!-- <img src="https://salad-pan.github.io/assets/fig4-1.png" alt="Full Resolution" width="100%" /> -->
-    <img src="https://salad-pan.github.io/assets/fig4.webp" alt="Full Resolution" width="100%" />
-  </a>
-  <em>Visual comparison on WorldView-3 (WV-3) and QuickBird (QB) dataset at full resolution.</em>
+  <em>Visual comparison on the WorldView-3 (WV3) and QuickBird (QB) datasets at reduced resolution.</em>
 </p>
 
-### Efficiency comparison (RR, QB)
+<p align="center">
+  <a href="https://salad-pan.github.io/assets/fig4.pdf">
+    <img src="https://salad-pan.github.io/assets/fig4.webp" alt="Full Resolution" width="100%" />
+  </a>
+  <br>
+  <em>Visual comparison on the WorldView-3 (WV3) and QuickBird (QB) datasets at full resolution.</em>
+</p>
+
+### Efficiency Comparison (RR, QB)
 
 | Diffusion-based Methods |           SAM ↓ |         ERGAS ↓ |  NFE | Latency (s) ↓ |
 | ----------------------- | --------------: | --------------: | ---: | ------------: |
@@ -253,11 +267,11 @@ To enable xformers, set `enable_xformers_memory_efficient_attention=True`.
 | SGDiff                  |     4.353±0.741 |     3.578±0.290 |   50 |     6.64±0.09 |
 | **SALAD-Pan**           | **4.198±0.526** | **3.251±0.288** |   20 | **3.36±0.07** |
 
-> Latency is reported as mean ± std over 10 runs (warmup=3), batch size=1, evaluated on the QB dataset under the reduced-resolution (RR) protocol, on an RTX 4090 GPU.
+> Latency is reported as mean ± std over 10 runs (warmup = 3), with batch size = 1, evaluated on the QB dataset under the reduced-resolution (RR) protocol on an RTX 4090 GPU.
 
 ## Citation
 
-If you make use of our work, please cite our paper.
+If you find our work useful, please cite:
 
 ```bibtex
 @article{li2026saladpan,
@@ -270,5 +284,5 @@ If you make use of our work, please cite our paper.
 
 ## Shoutouts
 
-- Built with [🤗 Diffusers](https://github.com/huggingface/diffusers). Thanks for open-sourcing !
-- The interactive demo is powered by [🤗 Gradio](https://github.com/gradio-app/gradio). Thanks for open-sourcing !
+* Built with [🤗 Diffusers](https://github.com/huggingface/diffusers). Thanks for open-sourcing!
+* The interactive demo is powered by [🤗 Gradio](https://github.com/gradio-app/gradio). Thanks for open-sourcing!
