@@ -53,7 +53,6 @@
 ## Contents
 
 - [Setup](#setup)
-<!-- - [Demo](#demo) -->
 - [Usage](#usage)
 - [Repository Layout](#repository-layout)
 - [Results](#results)
