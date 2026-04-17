@@ -649,13 +649,18 @@ class UNetDualBranchXSModel(ModelMixin, ConfigMixin):
         cls,
         unet: UNet2DConditionModel,
         controlnet: Optional[DualBranchXSAdapter] = None,
+        adapter: Optional[DualBranchXSAdapter] = None,
         size_ratio: Optional[float] = None,
         ctrl_block_out_channels: Optional[List[float]] = None,
         time_embedding_mix: Optional[float] = None,
         ctrl_optional_kwargs: Optional[Dict] = None,
     ):
-        if controlnet is None:
-            controlnet = DualBranchXSAdapter.from_unet(
+        if adapter is not None and controlnet is not None and adapter is not controlnet:
+            raise ValueError("Pass only one of `adapter` or `controlnet`.")
+        adapter_module = adapter if adapter is not None else controlnet
+
+        if adapter_module is None:
+            adapter_module = DualBranchXSAdapter.from_unet(
                 unet, size_ratio, ctrl_block_out_channels, **(ctrl_optional_kwargs or {})
             )
         else:
@@ -696,8 +701,8 @@ class UNetDualBranchXSModel(ModelMixin, ConfigMixin):
             "num_attention_heads",
             "max_norm_num_groups",
         ]
-        params_for_controlnet = {"ctrl_" + k: v for k, v in controlnet.config.items() if k in params_for_controlnet}
-        params_for_controlnet["time_embedding_mix"] = controlnet.config.time_embedding_mix
+        params_for_controlnet = {"ctrl_" + k: v for k, v in adapter_module.config.items() if k in params_for_controlnet}
+        params_for_controlnet["time_embedding_mix"] = adapter_module.config.time_embedding_mix
 
         model = cls.from_config({**params_for_unet, **params_for_controlnet})
 
@@ -718,12 +723,12 @@ class UNetDualBranchXSModel(ModelMixin, ConfigMixin):
             if hasattr(unet, m) and getattr(unet, m) is not None:
                 getattr(model, "base_" + m).load_state_dict(getattr(unet, m).state_dict())
 
-        total_c = int(getattr(model.config, "ctrl_conditioning_channels", controlnet.config.conditioning_channels))
+        total_c = int(getattr(model.config, "ctrl_conditioning_channels", adapter_module.config.conditioning_channels))
         if total_c < 2:
             raise ValueError(f"`ctrl_conditioning_channels` must be >= 2, got {total_c}.")
         ms_ch = total_c - 1
 
-        src_emb = controlnet.controlnet_cond_embedding
+        src_emb = adapter_module.controlnet_cond_embedding
         spe_map = list(range(0, ms_ch))
         spa_map = [ms_ch]
 
@@ -738,23 +743,23 @@ class UNetDualBranchXSModel(ModelMixin, ConfigMixin):
             channel_map=spa_map,
         )
 
-        model.ctrl_conv_in_spa.load_state_dict(controlnet.conv_in.state_dict())
-        model.ctrl_conv_in_spe.load_state_dict(controlnet.conv_in.state_dict())
+        model.ctrl_conv_in_spa.load_state_dict(adapter_module.conv_in.state_dict())
+        model.ctrl_conv_in_spe.load_state_dict(adapter_module.conv_in.state_dict())
 
-        if controlnet.time_embedding is not None:
-            model.ctrl_time_embedding.load_state_dict(controlnet.time_embedding.state_dict())
+        if adapter_module.time_embedding is not None:
+            model.ctrl_time_embedding.load_state_dict(adapter_module.time_embedding.state_dict())
 
-        model.control_to_base_for_conv_in_spa.load_state_dict(controlnet.control_to_base_for_conv_in.state_dict())
-        model.control_to_base_for_conv_in_spe.load_state_dict(controlnet.control_to_base_for_conv_in.state_dict())
+        model.control_to_base_for_conv_in_spa.load_state_dict(adapter_module.control_to_base_for_conv_in.state_dict())
+        model.control_to_base_for_conv_in_spe.load_state_dict(adapter_module.control_to_base_for_conv_in.state_dict())
 
         model.down_blocks = nn.ModuleList(
             DualBranchXSCrossAttnDownBlock2D.from_modules(b, c)
-            for b, c in zip(unet.down_blocks, controlnet.down_blocks)
+            for b, c in zip(unet.down_blocks, adapter_module.down_blocks)
         )
-        model.mid_block = DualBranchXSCrossAttnMidBlock2D.from_modules(unet.mid_block, controlnet.mid_block)
+        model.mid_block = DualBranchXSCrossAttnMidBlock2D.from_modules(unet.mid_block, adapter_module.mid_block)
         model.up_blocks = nn.ModuleList(
             DualBranchXSCrossAttnUpBlock2D.from_modules(b, c)
-            for b, c in zip(unet.up_blocks, controlnet.up_connections)
+            for b, c in zip(unet.up_blocks, adapter_module.up_connections)
         )
 
         model.to(unet.dtype)
@@ -876,6 +881,7 @@ class UNetDualBranchXSModel(ModelMixin, ConfigMixin):
         timestep: Union[torch.Tensor, float, int],
         encoder_hidden_states: torch.Tensor,
         controlnet_cond: Optional[torch.Tensor] = None,
+        adapter_cond: Optional[torch.Tensor] = None,
         conditioning_scale: Optional[float] = None,
         conditioning_scale_spa: Optional[float] = None,
         conditioning_scale_spe: Optional[float] = None,
@@ -887,6 +893,11 @@ class UNetDualBranchXSModel(ModelMixin, ConfigMixin):
         return_dict: bool = True,
         apply_control: bool = True,
     ) -> Union[DualBranchXSOutput, Tuple]:
+        if adapter_cond is not None and controlnet_cond is not None and adapter_cond is not controlnet_cond:
+            raise ValueError("Pass only one of `adapter_cond` or `controlnet_cond`.")
+        if adapter_cond is not None:
+            controlnet_cond = adapter_cond
+
         if controlnet_cond is not None and self.config.ctrl_conditioning_channel_order == "bgr":
             if controlnet_cond.shape[1] == 3:
                 controlnet_cond = torch.flip(controlnet_cond, dims=[1])

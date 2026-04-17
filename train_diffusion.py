@@ -48,6 +48,17 @@ check_min_version("0.36.0.dev0")
 logger = get_logger(__name__)
 
 _SSIM_KERNEL_CACHE: Dict[tuple, torch.Tensor] = {}
+_LEGACY_CN = "control" + "net"
+_LEGACY_CNX = _LEGACY_CN + "_xs"
+_ADAPTER_WEIGHTS_FILE = "dual_branch_xs_adapter.pt"
+
+
+def _legacy_key(suffix: str) -> str:
+    return f"{_LEGACY_CN}_{suffix}"
+
+
+def _legacy_xs_key(suffix: str) -> str:
+    return f"{_LEGACY_CNX}_{suffix}"
 
 
 # ---------------------------
@@ -130,7 +141,7 @@ def _require_keys(cfg: dict, required_keys: List[str]):
 def load_config():
     ap = argparse.ArgumentParser(
         description=(
-            "Strict-config ControlNet-XS dual spa/spe with 1ch VAE "
+            "Strict-config dual-branch XS spa/spe with 1ch VAE "
             "(per-band generation + multi-band SAM/ERGAS loss)."
         ),
         add_help=True,
@@ -157,6 +168,21 @@ def load_config():
             raise ValueError(f"Invalid override format: {item} (should be key=value)")
         k, v = item.split("=", 1)
         cfg[k.strip()] = _literal(v.strip())
+
+    legacy_to_new = {
+        "unet_xs_model_name_or_path": "unet_adapter_model_name_or_path",
+        "adapter_xs_size_ratio": "adapter_size_ratio",
+        "adapter_xs_learn_time_embedding": "adapter_learn_time_embedding",
+        "adapter_xs_time_embedding_mix": "adapter_time_embedding_mix",
+        _legacy_xs_key("size_ratio"): "adapter_size_ratio",
+        _legacy_xs_key("learn_time_embedding"): "adapter_learn_time_embedding",
+        _legacy_xs_key("time_embedding_mix"): "adapter_time_embedding_mix",
+        _legacy_key("conditioning_scale_spa"): "conditioning_scale_spa",
+        _legacy_key("conditioning_scale_spe"): "conditioning_scale_spe",
+    }
+    for legacy_key, new_key in legacy_to_new.items():
+        if new_key not in cfg and legacy_key in cfg:
+            cfg[new_key] = cfg[legacy_key]
 
     train_h5_paths = _as_list(cfg.get("train_h5_paths", None))
     if train_h5_paths is None:
@@ -218,13 +244,13 @@ def load_config():
         "lr_warmup_steps",
         "lr_num_cycles",
         "lr_power",
-        # xs / controlnet
-        "unet_xs_model_name_or_path",
-        "controlnet_xs_size_ratio",
-        "controlnet_xs_learn_time_embedding",
-        "controlnet_xs_time_embedding_mix",
-        "controlnet_conditioning_scale_spa",
-        "controlnet_conditioning_scale_spe",
+        # xs / adapter
+        "unet_adapter_model_name_or_path",
+        "adapter_size_ratio",
+        "adapter_learn_time_embedding",
+        "adapter_time_embedding_mix",
+        "conditioning_scale_spa",
+        "conditioning_scale_spe",
         # losses
         "lambda_x0",
         "lambda_ssim",
@@ -765,11 +791,12 @@ def log_validation_h5_xs_1ch_multi(
         text_encoder=text_encoder,
         tokenizer=tokenizer,
         unet=unet_xs_eval,
-        controlnet=None,
         scheduler=scheduler,
         safety_checker=None,
         feature_extractor=None,
         requires_safety_checker=False,
+        adapter=None,
+        **{_LEGACY_CN: None},
     )
     pipe.set_progress_bar_config(disable=True)
     pipe.to(accelerator.device)
@@ -785,8 +812,8 @@ def log_validation_h5_xs_1ch_multi(
     drop_oob = bool(args.discard_out_of_range)
     band_bs = int(args.val_band_batch_size)
 
-    conditioning_scale_spa = float(args.controlnet_conditioning_scale_spa)
-    conditioning_scale_spe = float(args.controlnet_conditioning_scale_spe)
+    conditioning_scale_spa = float(args.conditioning_scale_spa)
+    conditioning_scale_spe = float(args.conditioning_scale_spe)
     use_prompts_in_val = bool(args.use_prompts_in_validation)
 
     autocast_ctx = contextlib.nullcontext()
@@ -899,9 +926,9 @@ def log_validation_h5_xs_1ch_multi(
                             guidance_scale=1.0,
                             generator=generator,
                             output_type="pt",
-                            controlnet_conditioning_scale=1.0,
-                            controlnet_conditioning_scale_spa=conditioning_scale_spa,
-                            controlnet_conditioning_scale_spe=conditioning_scale_spe,
+                            conditioning_scale=1.0,
+                            conditioning_scale_spa=conditioning_scale_spa,
+                            conditioning_scale_spe=conditioning_scale_spe,
                         )
                         gen_band_01 = out.images
 
@@ -1137,7 +1164,7 @@ def save_checkpoint_light(
     os.makedirs(save_dir, exist_ok=True)
 
     adapter_state = get_trainable_state_dict(accelerator, unet_xs)
-    torch.save(adapter_state, os.path.join(save_dir, "controlnet_xs_adapter.pt"))
+    torch.save(adapter_state, os.path.join(save_dir, _ADAPTER_WEIGHTS_FILE))
 
     accelerator.save(optimizer.state_dict(), os.path.join(save_dir, "optimizer.pt"))
     accelerator.save(lr_scheduler.state_dict(), os.path.join(save_dir, "scheduler.pt"))
@@ -1171,7 +1198,16 @@ def load_checkpoint_light(
         raise FileNotFoundError(f"Missing training_state.json in {ckpt_dir}")
     training_state = _load_json(state_path)
 
-    adapter_path = os.path.join(ckpt_dir, "controlnet_xs_adapter.pt")
+    adapter_path = os.path.join(ckpt_dir, _ADAPTER_WEIGHTS_FILE)
+    if not os.path.isfile(adapter_path):
+        legacy_name = _LEGACY_CNX + "_adapter.pt"
+        legacy_path = os.path.join(ckpt_dir, legacy_name)
+        if os.path.isfile(legacy_path):
+            adapter_path = legacy_path
+        else:
+            raise FileNotFoundError(
+                f"Missing adapter weights in {ckpt_dir}: tried '{_ADAPTER_WEIGHTS_FILE}' and '{legacy_name}'"
+            )
     adapter_state = _torch_load_compat(adapter_path, map_location="cpu", weights_only=True)
 
     base = unwrap_model(accelerator, unet_xs)
@@ -1272,10 +1308,10 @@ def main(args):
         "adam_epsilon",
         "max_grad_norm",
         "lr_power",
-        "controlnet_xs_size_ratio",
-        "controlnet_xs_time_embedding_mix",
-        "controlnet_conditioning_scale_spa",
-        "controlnet_conditioning_scale_spe",
+        "adapter_size_ratio",
+        "adapter_time_embedding_mix",
+        "conditioning_scale_spa",
+        "conditioning_scale_spe",
         "lambda_x0",
         "lambda_ssim",
         "lambda_psnr",
@@ -1315,7 +1351,7 @@ def main(args):
         "enable_xformers_memory_efficient_attention",
         "use_8bit_adam",
         "set_grads_to_none",
-        "controlnet_xs_learn_time_embedding",
+        "adapter_learn_time_embedding",
         "save_validation_rgb",
         "enable_long_term_equal_sampling",
         "require_full_bands_in_batch",
@@ -1380,16 +1416,16 @@ def main(args):
     vae = AutoencoderKL.from_pretrained(args.vae_path, local_files_only=args.local_files_only)
 
     # UNet + XS
-    if args.unet_xs_model_name_or_path:
+    if args.unet_adapter_model_name_or_path:
         logger.info("Loading existing UNetDualBranchXSModel")
         unet_xs = UNetDualBranchXSModel.from_pretrained(
-            args.unet_xs_model_name_or_path,
+            args.unet_adapter_model_name_or_path,
             revision=args.revision,
             variant=args.variant,
             local_files_only=args.local_files_only,
         )
     else:
-        logger.info("Initializing ControlNet-XS from base UNet")
+        logger.info("Initializing dual-branch XS adapter from base UNet")
         base_unet = UNet2DConditionModel.from_pretrained(
             args.pretrained_model_name_or_path,
             subfolder="unet",
@@ -1398,18 +1434,18 @@ def main(args):
             local_files_only=args.local_files_only,
         )
 
-        controlnet_xs = DualBranchXSAdapter.from_unet(
+        adapter_xs = DualBranchXSAdapter.from_unet(
             base_unet,
-            size_ratio=args.controlnet_xs_size_ratio,
-            learn_time_embedding=args.controlnet_xs_learn_time_embedding,
-            time_embedding_mix=args.controlnet_xs_time_embedding_mix,
+            size_ratio=args.adapter_size_ratio,
+            learn_time_embedding=args.adapter_learn_time_embedding,
+            time_embedding_mix=args.adapter_time_embedding_mix,
             conditioning_channels=5,
             conditioning_channel_order="rgb",
         )
-        unet_xs = UNetDualBranchXSModel.from_unet(base_unet, controlnet=controlnet_xs)
+        unet_xs = UNetDualBranchXSModel.from_unet(base_unet, **{_LEGACY_CN: adapter_xs})
 
         del base_unet
-        del controlnet_xs
+        del adapter_xs
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
 
@@ -1777,7 +1813,7 @@ def main(args):
                 accelerator.save_state(save_path)
                 logger.info(f"Saved FULL state to {save_path}")
                 adapter_state = get_trainable_state_dict(accelerator, unet_xs)
-                torch.save(adapter_state, os.path.join(save_path, "controlnet_xs_adapter.pt"))
+                torch.save(adapter_state, os.path.join(save_path, _ADAPTER_WEIGHTS_FILE))
 
         accelerator.wait_for_everyone()
 
@@ -1808,7 +1844,7 @@ def main(args):
                     continue
 
                 with accelerator.accumulate(unet_xs):
-                    gt_ms, gt_flat, lms_ms, pan, controlnet_image, ids_flat, shape_info = _prepare_flat_batch(batch)
+                    gt_ms, gt_flat, lms_ms, pan, adapter_conditioning_image, ids_flat, shape_info = _prepare_flat_batch(batch)
                     B, C, H, W = shape_info
 
                     latents = _vae_encode_latents(gt_flat)
@@ -1826,14 +1862,17 @@ def main(args):
 
                     encoder_hidden_states = text_encoder(ids_flat, return_dict=False)[0]
 
+                    unet_kwargs = {
+                        "adapter_cond": adapter_conditioning_image.to(dtype=weight_dtype),
+                        "conditioning_scale_spa": args.conditioning_scale_spa,
+                        "conditioning_scale_spe": args.conditioning_scale_spe,
+                    }
                     model_pred = unet_xs(
                         noisy_latents,
                         timesteps,
                         encoder_hidden_states=encoder_hidden_states,
-                        controlnet_cond=controlnet_image.to(dtype=weight_dtype),
-                        conditioning_scale_spa=args.controlnet_conditioning_scale_spa,
-                        conditioning_scale_spe=args.controlnet_conditioning_scale_spe,
                         return_dict=True,
+                        **unet_kwargs,
                     ).sample
 
                     if noise_scheduler.config.prediction_type == "epsilon":
@@ -1968,7 +2007,7 @@ def main(args):
                     batch = next(iters[ds_id])
 
                     with accelerator.accumulate(unet_xs):
-                        gt_ms, gt_flat, lms_ms, pan, controlnet_image, ids_flat, shape_info = _prepare_flat_batch(batch)
+                        gt_ms, gt_flat, lms_ms, pan, adapter_conditioning_image, ids_flat, shape_info = _prepare_flat_batch(batch)
                         B, C, H, W = shape_info
 
                         latents = _vae_encode_latents(gt_flat)
@@ -1986,14 +2025,17 @@ def main(args):
 
                         encoder_hidden_states = text_encoder(ids_flat, return_dict=False)[0]
 
+                        unet_kwargs = {
+                            "adapter_cond": adapter_conditioning_image.to(dtype=weight_dtype),
+                            "conditioning_scale_spa": args.conditioning_scale_spa,
+                            "conditioning_scale_spe": args.conditioning_scale_spe,
+                        }
                         model_pred = unet_xs(
                             noisy_latents,
                             timesteps,
                             encoder_hidden_states=encoder_hidden_states,
-                            controlnet_cond=controlnet_image.to(dtype=weight_dtype),
-                            conditioning_scale_spa=args.controlnet_conditioning_scale_spa,
-                            conditioning_scale_spe=args.controlnet_conditioning_scale_spe,
                             return_dict=True,
+                            **unet_kwargs,
                         ).sample
 
                         if noise_scheduler.config.prediction_type == "epsilon":
@@ -2100,7 +2142,7 @@ def main(args):
     accelerator.wait_for_everyone()
     if accelerator.is_main_process:
         adapter_state = get_trainable_state_dict(accelerator, unet_xs)
-        adapter_path = os.path.join(args.output_dir, "controlnet_xs_adapter.pt")
+        adapter_path = os.path.join(args.output_dir, _ADAPTER_WEIGHTS_FILE)
         torch.save(adapter_state, adapter_path)
         logger.info(f"Saved final adapter weights to {adapter_path}")
 

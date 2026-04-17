@@ -1,2 +1,2 @@
 #!/bin/bash
-accelerate launch --config_file config/accelerate.yaml train_diffusion.py --config config/train_diffusion.yaml
+accelerate launch --config_file configs/accelerate.yaml train_diffusion.py --config configs/train_diffusion.yaml
