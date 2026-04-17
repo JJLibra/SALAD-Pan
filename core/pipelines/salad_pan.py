@@ -72,16 +72,21 @@ class StableDiffusionDualBranchXSPipeline(
         safety_checker: Optional[StableDiffusionSafetyChecker],
         feature_extractor: Optional[CLIPImageProcessor],
         requires_safety_checker: bool = True,
+        adapter: Optional[DualBranchXSAdapter] = None,
     ):
         super().__init__()
 
+        if adapter is not None and controlnet is not None and adapter is not controlnet:
+            raise ValueError("Pass only one of `adapter` or `controlnet`.")
+        adapter_module = adapter if adapter is not None else controlnet
+
         if isinstance(unet, UNet2DConditionModel):
-            if controlnet is None:
+            if adapter_module is None:
                 raise ValueError(
                     "When `unet` is UNet2DConditionModel you must provide an adapter "
-                    "to build UNetDualBranchXSModel.from_unet(unet, controlnet)."
+                    "to build UNetDualBranchXSModel.from_unet(unet, adapter=...)."
                 )
-            unet = UNetDualBranchXSModel.from_unet(unet, controlnet)
+            unet = UNetDualBranchXSModel.from_unet(unet, adapter=adapter_module)
 
         if safety_checker is None and requires_safety_checker:
             logger.warning(
@@ -101,11 +106,13 @@ class StableDiffusionDualBranchXSPipeline(
             text_encoder=text_encoder,
             tokenizer=tokenizer,
             unet=unet,
-            controlnet=controlnet,
+            controlnet=adapter_module,
             scheduler=scheduler,
             safety_checker=safety_checker,
             feature_extractor=feature_extractor,
         )
+        # Neutral alias for external callers.
+        self.adapter = adapter_module
 
         self.vae_scale_factor = 2 ** (len(self.vae.config.block_out_channels) - 1) if getattr(self, "vae", None) else 8
 
@@ -318,6 +325,7 @@ class StableDiffusionDualBranchXSPipeline(
         prompt_embeds=None,
         negative_prompt_embeds=None,
         controlnet_conditioning_scale: float = 1.0,
+        conditioning_scale: Optional[float] = None,
         control_guidance_start: float = 0.0,
         control_guidance_end: float = 1.0,
         callback_on_step_end_tensor_inputs=None,
@@ -366,8 +374,10 @@ class StableDiffusionDualBranchXSPipeline(
 
         self.check_image(image, prompt, prompt_embeds)
 
+        if conditioning_scale is not None:
+            controlnet_conditioning_scale = conditioning_scale
         if not isinstance(controlnet_conditioning_scale, float):
-            raise TypeError("`controlnet_conditioning_scale` must be float.")
+            raise TypeError("`conditioning_scale`/`controlnet_conditioning_scale` must be float.")
 
         start, end = control_guidance_start, control_guidance_end
         if start >= end:
@@ -516,11 +526,14 @@ class StableDiffusionDualBranchXSPipeline(
         return_dict: bool = True,
         cross_attention_kwargs: Optional[Dict[str, Any]] = None,
         controlnet_conditioning_scale: float = 1.0,
+        conditioning_scale: Optional[float] = None,
         control_guidance_start: float = 0.0,
         control_guidance_end: float = 1.0,
         clip_skip: Optional[int] = None,
         controlnet_conditioning_scale_spa: Optional[float] = None,
         controlnet_conditioning_scale_spe: Optional[float] = None,
+        conditioning_scale_spa: Optional[float] = None,
+        conditioning_scale_spe: Optional[float] = None,
         callback_on_step_end: Optional[
             Union[Callable[[int, int, Dict], None], PipelineCallback, MultiPipelineCallbacks]
         ] = None,
@@ -530,6 +543,13 @@ class StableDiffusionDualBranchXSPipeline(
             callback_on_step_end_tensor_inputs = callback_on_step_end.tensor_inputs
 
         unet = self.unet._orig_mod if is_compiled_module(self.unet) else self.unet
+
+        if conditioning_scale is not None:
+            controlnet_conditioning_scale = float(conditioning_scale)
+        if conditioning_scale_spa is not None:
+            controlnet_conditioning_scale_spa = conditioning_scale_spa
+        if conditioning_scale_spe is not None:
+            controlnet_conditioning_scale_spe = conditioning_scale_spe
 
         if controlnet_conditioning_scale_spa is None:
             controlnet_conditioning_scale_spa = controlnet_conditioning_scale
@@ -546,6 +566,7 @@ class StableDiffusionDualBranchXSPipeline(
             prompt_embeds,
             negative_prompt_embeds,
             controlnet_conditioning_scale=float(controlnet_conditioning_scale),
+            conditioning_scale=conditioning_scale,
             control_guidance_start=control_guidance_start,
             control_guidance_end=control_guidance_end,
             callback_on_step_end_tensor_inputs=callback_on_step_end_tensor_inputs,
@@ -632,7 +653,7 @@ class StableDiffusionDualBranchXSPipeline(
                     sample=latent_model_input,
                     timestep=t,
                     encoder_hidden_states=prompt_embeds,
-                    controlnet_cond=image,
+                    adapter_cond=image,
                     conditioning_scale_spa=controlnet_conditioning_scale_spa,
                     conditioning_scale_spe=controlnet_conditioning_scale_spe,
                     cross_attention_kwargs=cross_attention_kwargs,
@@ -661,8 +682,13 @@ class StableDiffusionDualBranchXSPipeline(
 
         if hasattr(self, "final_offload_hook") and self.final_offload_hook is not None:
             self.unet.to("cpu")
-            if hasattr(self, "controlnet") and self.controlnet is not None:
-                self.controlnet.to("cpu")
+            module = None
+            if hasattr(self, "adapter") and self.adapter is not None:
+                module = self.adapter
+            elif hasattr(self, "controlnet") and self.controlnet is not None:
+                module = self.controlnet
+            if module is not None:
+                module.to("cpu")
             empty_device_cache()
 
         if output_type != "latent":
