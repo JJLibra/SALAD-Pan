@@ -31,6 +31,83 @@ check_min_version("0.36.0.dev0")
 logger = get_logger(__name__)
 
 
+def _infer_q_metric_from_tag(tag: str):
+    return (Q8_numpy, "q8") if str(tag).lower() == "wv3" else (Q4_numpy, "q4")
+
+
+def _build_validation_targets(args, tag_prefix: str):
+    targets = []
+
+    # Preferred generic spec list:
+    # validation_specs:
+    #   - name: gf2
+    #     h5_path: ...
+    #     clip_min: 0
+    #     clip_max: 2047
+    #     q_metric: q4|q8
+    raw_specs = getattr(args, "validation_specs", None)
+    if isinstance(raw_specs, list) and len(raw_specs) > 0:
+        for spec in raw_specs:
+            if not isinstance(spec, dict):
+                continue
+            name = str(spec.get("name", "custom")).strip() or "custom"
+            h5_path = spec.get("h5_path", None)
+            if not h5_path:
+                continue
+            clip_min = float(spec.get("clip_min", args.range_clip_min))
+            clip_max = float(spec.get("clip_max", args.range_clip_max))
+            q_metric = str(spec.get("q_metric", "")).strip().lower()
+            if q_metric == "q8":
+                q_metric_fn, q_tag_name = Q8_numpy, "q8"
+            elif q_metric == "q4":
+                q_metric_fn, q_tag_name = Q4_numpy, "q4"
+            else:
+                q_metric_fn, q_tag_name = _infer_q_metric_from_tag(name)
+            targets.append(
+                {
+                    "tag_prefix": f"{tag_prefix}_{name}",
+                    "h5_path": h5_path,
+                    "clip_min": clip_min,
+                    "clip_max": clip_max,
+                    "q_metric_fn": q_metric_fn,
+                    "q_tag_name": q_tag_name,
+                }
+            )
+        if len(targets) > 0:
+            return targets
+
+    # Backward-compatible legacy keys
+    for sensor_name in ("gf2", "qb", "wv3"):
+        h5_path = getattr(args, f"validation_h5_path_{sensor_name}", None)
+        if not h5_path:
+            continue
+        q_metric_fn, q_tag_name = _infer_q_metric_from_tag(sensor_name)
+        targets.append(
+            {
+                "tag_prefix": f"{tag_prefix}_{sensor_name}",
+                "h5_path": h5_path,
+                "clip_min": float(getattr(args, f"range_clip_min_{sensor_name}")),
+                "clip_max": float(getattr(args, f"range_clip_max_{sensor_name}")),
+                "q_metric_fn": q_metric_fn,
+                "q_tag_name": q_tag_name,
+            }
+        )
+
+    if len(targets) == 0 and getattr(args, "validation_h5_path", None):
+        targets.append(
+            {
+                "tag_prefix": tag_prefix,
+                "h5_path": args.validation_h5_path,
+                "clip_min": float(args.range_clip_min),
+                "clip_max": float(args.range_clip_max),
+                "q_metric_fn": Q4_numpy,
+                "q_tag_name": "q4",
+            }
+        )
+
+    return targets
+
+
 def _literal(v):
     if isinstance(v, str):
         try:
@@ -166,6 +243,10 @@ def load_config():
         "range_clip_max_wv3",
     ]
     _require_keys(cfg, required_keys)
+
+    # Optional generic validation specs (preferred), kept backward compatible with legacy keys.
+    if "validation_specs" not in cfg:
+        cfg["validation_specs"] = None
 
     if cfg["resolution"] % 8 != 0:
         raise ValueError("`resolution` must be divisible by 8.")
@@ -636,69 +717,23 @@ def _log_validation_one_sensor(
 
 @torch.no_grad()
 def log_validation_h5(vae, args, accelerator, weight_dtype, step, tag_prefix="val_h5"):
-    did_any = False
+    targets = _build_validation_targets(args, tag_prefix=tag_prefix)
+    if len(targets) == 0:
+        return
 
-    if args.validation_h5_path_gf2:
+    for t in targets:
         _log_validation_one_sensor(
             vae=vae,
             args=args,
             accelerator=accelerator,
             weight_dtype=weight_dtype,
             step=step,
-            tag_prefix=f"{tag_prefix}_gf2",
-            h5_path=args.validation_h5_path_gf2,
-            clip_min=float(args.range_clip_min_gf2),
-            clip_max=float(args.range_clip_max_gf2),
-            q_metric_fn=Q4_numpy,
-            q_tag_name="q4",
-        )
-        did_any = True
-
-    if args.validation_h5_path_qb:
-        _log_validation_one_sensor(
-            vae=vae,
-            args=args,
-            accelerator=accelerator,
-            weight_dtype=weight_dtype,
-            step=step,
-            tag_prefix=f"{tag_prefix}_qb",
-            h5_path=args.validation_h5_path_qb,
-            clip_min=float(args.range_clip_min_qb),
-            clip_max=float(args.range_clip_max_qb),
-            q_metric_fn=Q4_numpy,
-            q_tag_name="q4",
-        )
-        did_any = True
-
-    if args.validation_h5_path_wv3:
-        _log_validation_one_sensor(
-            vae=vae,
-            args=args,
-            accelerator=accelerator,
-            weight_dtype=weight_dtype,
-            step=step,
-            tag_prefix=f"{tag_prefix}_wv3",
-            h5_path=args.validation_h5_path_wv3,
-            clip_min=float(args.range_clip_min_wv3),
-            clip_max=float(args.range_clip_max_wv3),
-            q_metric_fn=Q8_numpy,
-            q_tag_name="q8",
-        )
-        did_any = True
-
-    if (not did_any) and args.validation_h5_path:
-        _log_validation_one_sensor(
-            vae=vae,
-            args=args,
-            accelerator=accelerator,
-            weight_dtype=weight_dtype,
-            step=step,
-            tag_prefix=tag_prefix,
-            h5_path=args.validation_h5_path,
-            clip_min=float(args.range_clip_min),
-            clip_max=float(args.range_clip_max),
-            q_metric_fn=Q4_numpy,
-            q_tag_name="q4",
+            tag_prefix=t["tag_prefix"],
+            h5_path=t["h5_path"],
+            clip_min=t["clip_min"],
+            clip_max=t["clip_max"],
+            q_metric_fn=t["q_metric_fn"],
+            q_tag_name=t["q_tag_name"],
         )
 
 
@@ -741,7 +776,7 @@ def calibrate_scaling_factor(vae, dataset, args, accelerator, weight_dtype):
         new_sf = float(args.target_latent_std) / max(mean_std, 1e-8)
         raw_vae.config.scaling_factor = new_sf
         logger.info(
-            f"[Calibrate scaling_factor] old={old_sf:.6f}, std(z_raw)≈{mean_std:.6f}, "
+            f"[Calibrate scaling_factor] old={old_sf:.6f}, std(z_raw)~{mean_std:.6f}, "
             f"target={float(args.target_latent_std):.6f} => new={new_sf:.6f}"
         )
     else:
