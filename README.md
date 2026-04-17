@@ -36,13 +36,13 @@
   <em>Given a PAN–LRMS image pair, SALAD-Pan fine-tunes a pre-trained diffusion model to generate a HRMS image.</em>
 </p>
 
-## Demo
+<!-- ## Demo
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/salad-pan/salad-pan.github.io/main/public/assets/salad_pan_demo.jpg" alt="SALAD-Pan Demo" width="100%" />
   <br/>
   <em>Interactive demo of SALAD-Pan for pan-sharpening.</em>
-</p>
+</p> -->
 
 ## News
 <!-- ### 🚨 Announcing [](): A CVPR competition for AI-based xxxxxx! Submissions due xxx x. Don't miss out! 🤩  -->
@@ -53,8 +53,9 @@
 ## Contents
 
 - [Setup](#setup)
-- [Demo](#demo)
+<!-- - [Demo](#demo) -->
 - [Usage](#usage)
+- [Repository Layout](#repository-layout)
 - [Results](#results)
 - [Citation](#citation)
 - [Shoutouts](#shoutouts)
@@ -103,6 +104,16 @@ We provide **two-stage checkpoints**:
   - **Adapters**: `checkpoints/adapters.pth`
     Download: [Hugging Face](https://huggingface.co/xxfer/SALAD-Pan)
 
+## Repository Layout
+
+- `configs/`: training and inference YAML configurations.
+- `core/`: project model components and diffusion pipeline implementation.
+- `utils/`: data prep and metric utilities.
+- `scripts/`: convenience shell launchers.
+- `data/`: dataset root and expected structure notes.
+- `checkpoints/`: local checkpoint storage.
+- `base/stable-diffusion-v1-5/`: local SD v1.5 base model files.
+
 ## Usage
 
 ### Training
@@ -112,13 +123,13 @@ We train the model in **two stages**.
 - **Stage I (VAE pretraining)**
 
 ```bash
-accelerate launch train_vae.py --config configs/train_vae.yaml
+accelerate launch --config_file configs/accelerate.yaml train_vae.py --config configs/train_vae.yaml
 ```
 
 - **Stage II (Diffusion + Adapter training)**
 
 ```bash
-accelerate launch train_diffusion.py --config configs/train_diffusion.yaml
+accelerate launch --config_file configs/accelerate.yaml train_diffusion.py --config configs/train_diffusion.yaml
 ```
 
 > Note: Training usually takes `40k–50k` steps, which is about `1–2` days on eight RTX 4090 GPUs in fp16. Reduce `batch_size` if your GPU memory is limited.
@@ -128,7 +139,58 @@ accelerate launch train_diffusion.py --config configs/train_diffusion.yaml
 Once training is finished, run inference:
 
 ```python
-Coming soon.
+import torch
+from diffusers import AutoencoderKL, DDPMScheduler, UNet2DConditionModel, UniPCMultistepScheduler
+from transformers import AutoTokenizer, CLIPTextModel
+from core.components.salad_pan import DualBranchXSAdapter, UNetDualBranchXSModel
+from core.pipelines.salad_pan import StableDiffusionDualBranchXSPipeline
+
+device = "cuda"
+dtype = torch.float16
+
+base_model = "base/stable-diffusion-v1-5"
+vae_path = "output/vae_c1_gf2_qb_wv3"
+adapter_weights = "output/diffusion_model/dual_branch_xs_adapter.pt"
+
+tokenizer = AutoTokenizer.from_pretrained(base_model, subfolder="tokenizer", use_fast=False, local_files_only=True)
+text_encoder = CLIPTextModel.from_pretrained(base_model, subfolder="text_encoder", local_files_only=True)
+vae = AutoencoderKL.from_pretrained(vae_path, local_files_only=True)
+base_unet = UNet2DConditionModel.from_pretrained(base_model, subfolder="unet", local_files_only=True)
+
+adapter = DualBranchXSAdapter.from_unet(base_unet, size_ratio=0.25, conditioning_channels=5, conditioning_channel_order="rgb")
+unet = UNetDualBranchXSModel.from_unet(base_unet, adapter=adapter)
+unet.load_state_dict(torch.load(adapter_weights, map_location="cpu"), strict=False)
+
+scheduler = UniPCMultistepScheduler.from_config(
+    DDPMScheduler.from_pretrained(base_model, subfolder="scheduler", local_files_only=True).config
+)
+
+pipe = StableDiffusionDualBranchXSPipeline(
+    vae=vae,
+    text_encoder=text_encoder,
+    tokenizer=tokenizer,
+    unet=unet,
+    adapter=None,
+    scheduler=scheduler,
+    safety_checker=None,
+    feature_extractor=None,
+    requires_safety_checker=False,
+).to(device)
+
+prompt = ["GaoFen-2 satellite Band Red 630-690nm"]
+conditioning = torch.randn(1, 5, 128, 128, device=device, dtype=dtype)  # replace with real [LR*4, PAN]
+
+image = pipe(
+    prompt=prompt,
+    image=conditioning,
+    num_inference_steps=20,
+    guidance_scale=1.0,
+    conditioning_scale_spa=1.0,
+    conditioning_scale_spe=1.0,
+    output_type="pil",
+).images[0]
+
+image.save("salad_pan_demo.png")
 ```
 
 Installing [xformers](https://github.com/facebookresearch/xformers) is highly recommended for better GPU efficiency and speed.
