@@ -1,0 +1,145 @@
+pretrained_model_name_or_path: base/stable-diffusion-v1-5
+vae_path: output/vae_c1_gf2_qb_wv3
+
+unet_xs_model_name_or_path: null
+
+local_files_only: true
+revision: null
+variant: null
+tokenizer_name: null
+
+output_dir: output/diffusion_model
+logging_dir: logs
+seed: 2025
+
+controlnet_conditioning_scale_spa: 1.0
+controlnet_conditioning_scale_spe: 1.0
+
+controlnet_xs_size_ratio: 0.25
+controlnet_xs_learn_time_embedding: false
+controlnet_xs_time_embedding_mix: 1.0
+
+enable_long_term_equal_sampling: true
+steps_per_epoch: null
+equal_sampling_strategy: round_robin
+
+train_h5_paths:
+  - data/gf2/train_gf2.h5
+  - data/qb/train_qb.h5
+  - data/wv3/train_wv3.h5
+train_h5_names:
+  - gf2
+  - qb
+  - wv3
+
+h5_keys:
+  gt: gt
+  lms: lms
+  pan: pan
+
+range_clip_min: 0.0
+range_clip_max: 2047.0
+range_clip_max_map:
+  gf2: 1023.0
+  qb: 2047.0
+  wv3: 2047.0
+
+discard_out_of_range: false
+max_train_samples: null
+
+dataset_prompts:
+  gf2: "GaoFen-2 satellite: PAN 0.8 m; MS 3.2 m; 4 bands."
+  qb:  "QuickBird satellite: PAN 0.61 m; MS 2.44 m; 4 bands."
+  wv3: "WorldView-3 satellite: PAN 0.31 m; MS 1.24 m; 8 bands."
+
+band_prompts:
+  gf2:
+    - "Band Blue 450-520nm"
+    - "Band Green 520-590nm"
+    - "Band Red 630-690nm"
+    - "Band NIR 770-890nm"
+  qb:
+    - "Band Blue 450-520nm"
+    - "Band Green 520-600nm"
+    - "Band Red 630-690nm"
+    - "Band NIR 760-900nm"
+  wv3:
+    - "Band Coastal 400-450nm"
+    - "Band Blue 450-510nm"
+    - "Band Green 510-580nm"
+    - "Band Yellow 585-625nm"
+    - "Band Red 630-690nm"
+    - "Band RedEdge 705-745nm"
+    - "Band NIR1 770-895nm"
+    - "Band NIR2 860-1040nm"
+
+proportion_empty_prompts: 0.0
+use_prompts_in_validation: true
+
+validation_h5_paths:
+  - data/gf2/valid_gf2.h5
+  - data/qb/valid_qb.h5
+  - data/wv3/valid_wv3.h5
+validation_h5_names:
+  - gf2
+  - qb
+  - wv3
+
+validation_count: 4
+validation_indices:
+  gf2: [365, 1800, 937, 1406]
+  qb: [247, 492, 899, 556]
+  wv3: [268, 47, 511, 9]
+
+validation_steps: 1000
+val_num_inference_steps: 20
+val_band_batch_size: 8
+save_validation_rgb: true
+
+resolution: 128
+train_batch_size: 3
+gradient_accumulation_steps: 1
+dataloader_num_workers: 4
+
+num_train_epochs: 100
+max_train_steps: null
+
+learning_rate: 2.5e-4
+scale_lr: false
+lr_scheduler: cosine
+lr_warmup_steps: 2000
+lr_num_cycles: 1
+lr_power: 1.0
+
+use_8bit_adam: false
+adam_beta1: 0.9
+adam_beta2: 0.999
+adam_weight_decay: 0.01
+adam_epsilon: 1.0e-8
+max_grad_norm: 1.0
+
+mixed_precision: fp16
+allow_tf32: false
+enable_xformers_memory_efficient_attention: false
+gradient_checkpointing: false
+set_grads_to_none: false
+
+checkpointing_steps: 200
+checkpoints_total_limit: 5
+resume_from_checkpoint: null
+checkpoint_mode: light
+
+same_noise_for_all_bands: true
+vae_latent_mode: sample
+
+lambda_x0: 1.0
+lambda_ssim: 0.475
+lambda_psnr: 0.025
+
+lambda_sam: 0.5
+lambda_ergas: 0.01
+ergas_ratio: 4.0
+sam_eps: 1.0e-8
+ergas_eps: 1.0e-8
+
+require_full_bands_in_batch: true
