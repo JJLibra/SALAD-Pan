@@ -200,7 +200,7 @@ To enable it, set `enable_xformers_memory_efficient_attention=True`.
 
 ## Results
 
-**🚨 We strongly recommend visiting our [project website](https://cc-pan.github.io/) for a better reading experience.**
+**🚨 We strongly recommend visiting our [project website](https://salad-pan.github.io/) for a better reading experience.**
 
 ### Quantitative Results
 
