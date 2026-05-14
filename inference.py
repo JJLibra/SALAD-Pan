@@ -20,8 +20,8 @@ from transformers import AutoTokenizer, PretrainedConfig
 from diffusers import AutoencoderKL, DDPMScheduler, UNet2DConditionModel, UniPCMultistepScheduler
 from diffusers.utils import check_min_version
 
-from core.components.salad_pan import DualBranchXSAdapter, UNetDualBranchXSModel
-from core.pipelines.salad_pan import StableDiffusionDualBranchXSPipeline
+from core.components.cc_pan import DualBranchXSAdapter, UNetDualBranchXSModel
+from core.pipelines.cc_pan import StableDiffusionDualBranchXSPipeline
 from utils.metrics import Q4_numpy, Q8_numpy, SAM_numpy, ERGAS_numpy, SCC_numpy
 
 check_min_version("0.36.0.dev0")
@@ -86,7 +86,7 @@ def _legacy_xs_key(suffix: str) -> str:
 
 
 def load_config():
-    ap = argparse.ArgumentParser(description="SALAD-Pan diffusion inference for H5 datasets", add_help=True)
+    ap = argparse.ArgumentParser(description="CC-Pan diffusion inference for H5 datasets", add_help=True)
     ap.add_argument("--config", type=str, required=True, help="YAML config file path")
     ap.add_argument(
         "-o",

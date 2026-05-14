@@ -117,14 +117,14 @@ def _load_project_modules():
     model_file = _first_existing_file(
         [
             PROJECT_ROOT / "core" / "models" / "controlnet_xs_spa_spe_c1_glu.py",
-            PROJECT_ROOT / "core" / "components" / "salad_pan.py",
-            PROJECT_ROOT / "core" / "components" / "salad-pan.py",
+            PROJECT_ROOT / "core" / "components" / "cc_pan.py",
+            PROJECT_ROOT / "core" / "components" / "cc-pan.py",
         ]
     )
     pipeline_file = _first_existing_file(
         [
-            PROJECT_ROOT / "core" / "pipelines" / "salad_pan.py",
-            PROJECT_ROOT / "core" / "pipelines" / "salad-pan.py",
+            PROJECT_ROOT / "core" / "pipelines" / "cc_pan.py",
+            PROJECT_ROOT / "core" / "pipelines" / "cc-pan.py",
         ]
     )
 
@@ -1014,11 +1014,11 @@ def build_demo():
     }
     """
 
-    with gr.Blocks(css=custom_css, title="SALAD-PAN Demo") as demo:
+    with gr.Blocks(css=custom_css, title="CC-PAN Demo") as demo:
         gr.HTML(
             """
             <div class="main-header">
-                <h1>SALAD-PAN Demo</h1>
+                <h1>CC-PAN Demo</h1>
                 <p style="margin-top: 0.5rem; opacity: 0.9;">
                     Remote sensing image fusion demo based on a dual-branch diffusion model
                 </p>

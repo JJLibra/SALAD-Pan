@@ -1,4 +1,4 @@
-<h2 align="center">SALAD-Pan: Sensor-Agnostic Latent Adaptive Diffusion for Pan-Sharpening</h2>
+<h2 align="center">CC-Pan: Sensor-Agnostic Latent Adaptive Diffusion for Pan-Sharpening</h2>
 
 <p align="center">
   <a href="https://scholar.google.com/citations?hl=en&user=Jo_8lVcAAAAJ">Junjie Li</a> ·
@@ -14,7 +14,7 @@
   <a href="https://arxiv.org/abs/2602.04473">
     <img src="https://img.shields.io/badge/arXiv-2602.04473-b31b1b.svg" alt="arXiv">
   </a>
-  <a href="https://huggingface.co/xxfer/SALAD-Pan">
+  <a href="https://huggingface.co/xxfer/CC-Pan">
     <img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue" alt="Hugging Face Spaces">
   </a>
   <a href="https://salad-pan.github.io">
@@ -33,21 +33,21 @@
     <img src="https://salad-pan.github.io/assets/fig1.webp" alt="Structure" width="100%" />
   </a>
   <br/>
-  <em>Given a PAN–LRMS image pair, SALAD-Pan fine-tunes a pre-trained diffusion model to generate a HRMS image.</em>
+  <em>Given a PAN–LRMS image pair, CC-Pan fine-tunes a pre-trained diffusion model to generate a HRMS image.</em>
 </p>
 
 <!-- ## Demo
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/salad-pan/salad-pan.github.io/main/public/assets/salad_pan_demo.jpg" alt="SALAD-Pan Demo" width="100%" />
+  <img src="https://raw.githubusercontent.com/salad-pan/salad-pan.github.io/main/public/assets/salad_pan_demo.jpg" alt="CC-Pan Demo" width="100%" />
   <br/>
-  <em>Interactive demo of SALAD-Pan for pan-sharpening.</em>
+  <em>Interactive demo of CC-Pan for pan-sharpening.</em>
 </p> -->
 
 ## News
 <!-- ### 🚨 Announcing [](): A CVPR competition for AI-based xxxxxx! Submissions due xxx x. Don't miss out! 🤩  -->
 - **[02/01/2026]** Code will be released soon!
-<!-- - [04/30/2026] Pre-trained SALAD-Pan models are available on [Hugging Face Library](https://huggingface.co/xxfer/SALAD-Pan)! -->
+<!-- - [04/30/2026] Pre-trained CC-Pan models are available on [Hugging Face Library](https://huggingface.co/xxfer/CC-Pan)! -->
 <!-- - [05/01/2026] Code released! -->
 
 ## Contents
@@ -64,11 +64,11 @@
 ### Requirements
 
 ```shell
-git clone https://github.com/JJLibra/SALAD-Pan.git
-cd SALAD-Pan
+git clone https://github.com/JJLibra/CC-Pan.git
+cd CC-Pan
 
-conda create -n saladpan python=3.10 -y
-conda activate saladpan
+conda create -n ccpan python=3.10 -y
+conda activate ccpan
 
 # This project depends on a modified local version of `diffusers` under `./diffusers`.
 cd diffusers
@@ -95,13 +95,13 @@ accelerate config default
 We provide **two-stage checkpoints**:
 
 - **Stage I (Band-VAE)**: `checkpoints/vae.safetensors`
-  Download: [Hugging Face](https://huggingface.co/xxfer/SALAD-Pan)
+  Download: [Hugging Face](https://huggingface.co/xxfer/CC-Pan)
 
 - **Stage II (Latent Diffusion)**: runs **on top of Stable Diffusion** in the Band-VAE latent space.
 
   - **Stable Diffusion base**: download from Hugging Face (e.g., [Stable Diffusion v1-5](https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5))
   - **Adapters**: `checkpoints/adapters.pth`
-    Download: [Hugging Face](https://huggingface.co/xxfer/SALAD-Pan)
+    Download: [Hugging Face](https://huggingface.co/xxfer/CC-Pan)
 
 ## Repository Layout
 
@@ -141,8 +141,8 @@ Once training is finished, run inference:
 import torch
 from diffusers import AutoencoderKL, DDPMScheduler, UNet2DConditionModel, UniPCMultistepScheduler
 from transformers import AutoTokenizer, CLIPTextModel
-from core.components.salad_pan import DualBranchXSAdapter, UNetDualBranchXSModel
-from core.pipelines.salad_pan import StableDiffusionDualBranchXSPipeline
+from core.components.cc_pan import DualBranchXSAdapter, UNetDualBranchXSModel
+from core.pipelines.cc_pan import StableDiffusionDualBranchXSPipeline
 
 device = "cuda"
 dtype = torch.float16
@@ -189,7 +189,7 @@ image = pipe(
     output_type="pil",
 ).images[0]
 
-image.save("salad_pan_demo.png")
+image.save("cc_pan_demo.png")
 ```
 
 Installing [xformers](https://github.com/facebookresearch/xformers) is highly recommended for better GPU efficiency and speed.
@@ -197,7 +197,7 @@ To enable it, set `enable_xformers_memory_efficient_attention=True`.
 
 ## Results
 
-**🚨 We strongly recommend visiting our [project website](https://salad-pan.github.io/) for a better reading experience.**
+**🚨 We strongly recommend visiting our [project website](https://cc-pan.github.io/) for a better reading experience.**
 
 ### Quantitative Results
 
@@ -228,7 +228,7 @@ To enable it, set `enable_xformers_memory_efficient_attention=True`.
       <tr><td>PanDiff</td><td style="text-align:right;">TGRS’23</td><td style="text-align:right;">0.898±0.090</td><td style="text-align:right;">3.297±0.235</td><td style="text-align:right;">2.467±0.166</td><td style="text-align:right;">0.980±0.019</td><td style="text-align:right;">0.027±0.108</td><td style="text-align:right;">0.054±0.047</td><td style="text-align:right;">0.920±0.077</td></tr>
       <tr><td>SSDiff</td><td style="text-align:right;">NeurIPS’24</td><td style="text-align:right;">0.915±0.086</td><td style="text-align:right;">2.843±0.529</td><td style="text-align:right;">2.106±0.416</td><td style="text-align:right;">0.986±0.004</td><td style="text-align:right;">0.013±0.005</td><td style="text-align:right;">0.031±0.003</td><td style="text-align:right;">0.956±0.016</td></tr>
       <tr><td>SGDiff</td><td style="text-align:right;">CVPR’25</td><td style="text-align:right;"><u>0.921±0.082</u></td><td style="text-align:right;"><u>2.771±0.511</u></td><td style="text-align:right;"><u>2.044±0.449</u></td><td style="text-align:right;">0.987±0.009</td><td style="text-align:right;"><u>0.012±0.005</u></td><td style="text-align:right;"><u>0.027±0.003</u></td><td style="text-align:right;"><u>0.960±0.006</u></td></tr>
-      <tr><td><b>SALAD&#8209;Pan</b></td><td style="text-align:right;"><b>Ours</b></td><td style="text-align:right;"><b>0.924±0.064</b></td><td style="text-align:right;"><b>2.689±0.135</b></td><td style="text-align:right;"><b>1.839±0.211</b></td><td style="text-align:right;"><b>0.989±0.007</b></td><td style="text-align:right;"><b>0.010±0.008</b></td><td style="text-align:right;"><b>0.021±0.004</b></td><td style="text-align:right;"><b>0.965±0.007</b></td></tr>
+      <tr><td><b>CC&#8209;Pan</b></td><td style="text-align:right;"><b>Ours</b></td><td style="text-align:right;"><b>0.924±0.064</b></td><td style="text-align:right;"><b>2.689±0.135</b></td><td style="text-align:right;"><b>1.839±0.211</b></td><td style="text-align:right;"><b>0.989±0.007</b></td><td style="text-align:right;"><b>0.010±0.008</b></td><td style="text-align:right;"><b>0.021±0.004</b></td><td style="text-align:right;"><b>0.965±0.007</b></td></tr>
     </tbody>
   </table>
 </div>
@@ -262,7 +262,7 @@ To enable it, set `enable_xformers_memory_efficient_attention=True`.
       <tr><td>PanDiff</td><td style="text-align:right;">TGRS’23</td><td style="text-align:right;">0.934±0.095</td><td style="text-align:right;">4.575±0.255</td><td style="text-align:right;">3.742±0.353</td><td style="text-align:right;">0.980±0.007</td><td style="text-align:right;">0.058±0.015</td><td style="text-align:right;">0.064±0.020</td><td style="text-align:right;">0.881±0.075</td></tr>
       <tr><td>SSDiff</td><td style="text-align:right;">NeurIPS’24</td><td style="text-align:right;">0.934±0.094</td><td style="text-align:right;">4.464±0.747</td><td style="text-align:right;">3.632±0.275</td><td style="text-align:right;">0.982±0.008</td><td style="text-align:right;">0.031±0.011</td><td style="text-align:right;">0.036±0.013</td><td style="text-align:right;">0.934±0.021</td></tr>
       <tr><td>SGDiff</td><td style="text-align:right;">CVPR’25</td><td style="text-align:right;"><u>0.938±0.087</u></td><td style="text-align:right;"><u>4.353±0.741</u></td><td style="text-align:right;"><u>3.578±0.290</u></td><td style="text-align:right;">0.983±0.007</td><td style="text-align:right;">0.023±0.013</td><td style="text-align:right;">0.043±0.012</td><td style="text-align:right;">0.934±0.011</td></tr>
-      <tr><td><b>SALAD&#8209;Pan</b></td><td style="text-align:right;"><b>Ours</b></td><td style="text-align:right;"><b>0.939±0.088</b></td><td style="text-align:right;"><b>4.198±0.526</b></td><td style="text-align:right;"><b>3.251±0.288</b></td><td style="text-align:right;">0.984±0.009</td><td style="text-align:right;"><b>0.017±0.011</b></td><td style="text-align:right;"><b>0.026±0.009</b></td><td style="text-align:right;"><b>0.957±0.010</b></td></tr>
+      <tr><td><b>CC&#8209;Pan</b></td><td style="text-align:right;"><b>Ours</b></td><td style="text-align:right;"><b>0.939±0.088</b></td><td style="text-align:right;"><b>4.198±0.526</b></td><td style="text-align:right;"><b>3.251±0.288</b></td><td style="text-align:right;">0.984±0.009</td><td style="text-align:right;"><b>0.017±0.011</b></td><td style="text-align:right;"><b>0.026±0.009</b></td><td style="text-align:right;"><b>0.957±0.010</b></td></tr>
     </tbody>
   </table>
 </div>
@@ -296,7 +296,7 @@ To enable it, set `enable_xformers_memory_efficient_attention=True`.
       <tr><td>PanDiff</td><td style="text-align:right;">TGRS’23</td><td style="text-align:right;">0.979±0.011</td><td style="text-align:right;">0.888±0.037</td><td style="text-align:right;">0.746±0.031</td><td style="text-align:right;">0.988±0.003</td><td style="text-align:right;">0.027±0.011</td><td style="text-align:right;">0.073±0.013</td><td style="text-align:right;">0.903±0.025</td></tr>
       <tr><td>SSDiff</td><td style="text-align:right;">NeurIPS’24</td><td style="text-align:right;"><b>0.983±0.007</b></td><td style="text-align:right;"><u>0.670±0.124</u></td><td style="text-align:right;"><u>0.604±0.108</u></td><td style="text-align:right;">0.991±0.006</td><td style="text-align:right;">0.016±0.009</td><td style="text-align:right;">0.027±0.027</td><td style="text-align:right;">0.957±0.010</td></tr>
       <tr><td>SGDiff</td><td style="text-align:right;">CVPR’25</td><td style="text-align:right;">0.980±0.011</td><td style="text-align:right;">0.708±0.119</td><td style="text-align:right;">0.668±0.094</td><td style="text-align:right;">0.989±0.005</td><td style="text-align:right;">0.020±0.013</td><td style="text-align:right;"><u>0.024±0.022</u></td><td style="text-align:right;">0.959±0.011</td></tr>
-      <tr><td><b>SALAD&#8209;Pan</b></td><td style="text-align:right;"><b>Ours</b></td><td style="text-align:right;"><u>0.982±0.010</u></td><td style="text-align:right;"><b>0.667±0.051</b></td><td style="text-align:right;"><b>0.592±0.088</b></td><td style="text-align:right;">0.991±0.003</td><td style="text-align:right;"><u>0.005±0.002</u></td><td style="text-align:right;"><b>0.022±0.014</b></td><td style="text-align:right;"><b>0.973±0.010</b></td></tr>
+      <tr><td><b>CC&#8209;Pan</b></td><td style="text-align:right;"><b>Ours</b></td><td style="text-align:right;"><u>0.982±0.010</u></td><td style="text-align:right;"><b>0.667±0.051</b></td><td style="text-align:right;"><b>0.592±0.088</b></td><td style="text-align:right;">0.991±0.003</td><td style="text-align:right;"><u>0.005±0.002</u></td><td style="text-align:right;"><b>0.022±0.014</b></td><td style="text-align:right;"><b>0.973±0.010</b></td></tr>
     </tbody>
   </table>
 </div>
@@ -326,7 +326,7 @@ To enable it, set `enable_xformers_memory_efficient_attention=True`.
 | PanDiff                 |     4.575±0.255 |     3.742±0.353 | 1000 |   356.63±1.98 |
 | SSDiff                  |     4.464±0.747 |     3.632±0.275 |   10 |    10.10±0.21 |
 | SGDiff                  |     4.353±0.741 |     3.578±0.290 |   50 |     6.64±0.09 |
-| **SALAD-Pan**           | **4.198±0.526** | **3.251±0.288** |   20 | **3.36±0.07** |
+| **CC-Pan**           | **4.198±0.526** | **3.251±0.288** |   20 | **3.36±0.07** |
 
 > Latency is reported as mean ± std over 10 runs (warmup = 3), with batch size = 1, evaluated on the QB dataset under the reduced-resolution (RR) protocol on an RTX 4090 GPU.
 
@@ -335,8 +335,8 @@ To enable it, set `enable_xformers_memory_efficient_attention=True`.
 If you find our work useful, please cite:
 
 ```bibtex
-@article{li2026saladpan,
-  title={SALAD-Pan: Sensor-Agnostic Latent Adaptive Diffusion for Pan-Sharpening},
+@article{li2026ccpan,
+  title={CC-Pan: Sensor-Agnostic Latent Adaptive Diffusion for Pan-Sharpening},
   author={Junjie Li and Congyang Ou and Haokui Zhang and Guoting Wei and Shengqin Jiang and Ying Li and Chunhua Shen},
   journal={arXiv preprint arXiv:2602.04473},
   year={2026}
