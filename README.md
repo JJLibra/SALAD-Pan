@@ -1,4 +1,4 @@
-<h2 align="center">CC-Pan: Sensor-Agnostic Latent Adaptive Diffusion for Pan-Sharpening</h2>
+<h2 align="center">CC-Pan: Channel-wise Compression based Diffusion for Efficient Pan-Sharpening</h2>
 
 <p align="center">
   <a href="https://scholar.google.com/citations?hl=en&user=Jo_8lVcAAAAJ">Junjie Li</a> ·
