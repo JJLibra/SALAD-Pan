@@ -339,7 +339,7 @@ If you find our work useful, please cite:
 
 ```bibtex
 @article{li2026ccpan,
-  title={CC-Pan: Sensor-Agnostic Latent Adaptive Diffusion for Pan-Sharpening},
+  title={CC-Pan: Channel-wise Compression based Diffusion for Efficient Pan-Sharpening},
   author={Junjie Li and Congyang Ou and Haokui Zhang and Guoting Wei and Shengqin Jiang and Ying Li and Chunhua Shen},
   journal={arXiv preprint arXiv:2602.04473},
   year={2026}
