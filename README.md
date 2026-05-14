@@ -9,8 +9,8 @@ for Efficient Pan-Sharpening
   <a href="https://scholar.google.com/citations?hl=en&user=m3gPwCoAAAAJ">Haokui Zhang</a> ·
   <a href="https://scholar.google.com/citations?hl=en&user=NW8rUFkAAAAJ">Guoting Wei</a> ·
   <a href="https://ieeexplore.ieee.org/author/37086409411">Shengqin Jiang</a> ·
-  <a href="https://teacher.nwpu.edu.cn/2005000096.html">Ying Li</a> ·
-  <a href="https://scholar.google.com/citations?hl=en&user=Ljk2BvIAAAAJ">Chunhua Shen</a>
+  <a href="https://teacher.nwpu.edu.cn/2005000096.html">Ying Li</a>
+  <!-- <a href="https://scholar.google.com/citations?hl=en&user=Ljk2BvIAAAAJ">Chunhua Shen</a> -->
 </p>
 
 <p align="center">
