@@ -4,10 +4,10 @@ This directory contains the project-specific model and pipeline implementations 
 
 ## Structure
 
-- `components/salad_pan.py`
+- `components/cc_pan.py`
   - Defines the dual-branch adapter and fused UNet model.
   - Main classes: `DualBranchXSAdapter`, `UNetDualBranchXSModel`.
-- `pipelines/salad_pan.py`
+- `pipelines/cc_pan.py`
   - Defines `StableDiffusionDualBranchXSPipeline`.
   - Supports direct conditioning input (`[B, 5, H, W]`).
 

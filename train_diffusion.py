@@ -41,8 +41,8 @@ import yaml
 import h5py
 
 from utils.metrics import Q4_numpy, Q8_numpy, SAM_numpy, ERGAS_numpy, SCC_numpy
-from core.components.salad_pan import DualBranchXSAdapter, UNetDualBranchXSModel
-from core.pipelines.salad_pan import StableDiffusionDualBranchXSPipeline
+from core.components.cc_pan import DualBranchXSAdapter, UNetDualBranchXSModel
+from core.pipelines.cc_pan import StableDiffusionDualBranchXSPipeline
 
 check_min_version("0.36.0.dev0")
 logger = get_logger(__name__)

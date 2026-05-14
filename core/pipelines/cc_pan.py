@@ -26,7 +26,7 @@ from diffusers.pipelines.stable_diffusion.pipeline_output import StableDiffusion
 from diffusers.pipelines.stable_diffusion.safety_checker import StableDiffusionSafetyChecker
 
 from diffusers.models import AutoencoderKL, UNet2DConditionModel
-from core.components.salad_pan import DualBranchXSAdapter, UNetDualBranchXSModel
+from core.components.cc_pan import DualBranchXSAdapter, UNetDualBranchXSModel
 
 
 if is_torch_xla_available():
