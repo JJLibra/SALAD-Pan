@@ -175,6 +175,8 @@ accelerate launch --config_file configs/accelerate.yaml train_vae.py --config <p
 accelerate launch --config_file configs/accelerate.yaml train_diffusion.py --config <path/to/train_diffusion.yaml>
 ```
 
+If you prefer shell wrappers, `scripts/train_vae.sh` and `scripts/train_diffusion.sh` mirror the same two-stage workflow.
+
 > Note: Training usually takes `40k–50k` steps, which is about `1–2` days on eight RTX 4090 GPUs in fp16. Reduce `batch_size` if your GPU memory is limited.
 
 ### Inference
