@@ -70,6 +70,7 @@ CC-Pan is a diffusion-based pan-sharpening framework that compresses multispectr
 - [Usage](#usage)
 - [Repository Layout](#repository-layout)
 - [Results](#results)
+- [FAQ](#faq)
 - [Citation](#citation)
 - [Shoutouts](#shoutouts)
 
@@ -393,6 +394,17 @@ Depending on your inference config, `inference.py` can save predicted H5 files, 
 | **CC-Pan**           | **4.198±0.526** | **3.251±0.288** |   20 | **3.36±0.07** |
 
 > Latency is reported as mean ± std over 10 runs (warmup = 3), with batch size = 1, evaluated on the QB dataset under the reduced-resolution (RR) protocol on an RTX 4090 GPU.
+
+## FAQ
+
+**Do I need local Stable Diffusion weights?**  
+Yes. The training and inference code expects a local base model directory under `base/`.
+
+**Why do the training commands use `<path/to/...>.yaml` placeholders?**  
+Because the exact dataset paths, checkpoint locations, and output directories depend on your local setup.
+
+**What input format does offline evaluation expect?**  
+PanCollection-style H5 files with `gt`, `lms`, and `pan` keys are expected by the default pipeline.
 
 ## Citation
 
