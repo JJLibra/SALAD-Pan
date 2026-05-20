@@ -247,6 +247,8 @@ image.save("cc_pan_demo.png")
 Installing [xformers](https://github.com/facebookresearch/xformers) is highly recommended for better GPU efficiency and speed.
 To enable it, set `enable_xformers_memory_efficient_attention=True`.
 
+Depending on your inference config, `inference.py` can save predicted H5 files, RGB previews, and per-sample metric logs, which makes it suitable for both benchmarking and qualitative inspection.
+
 ## Results
 
 **🚨 We strongly recommend visiting our [project website](https://salad-pan.github.io/) for a better reading experience.**
