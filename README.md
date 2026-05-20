@@ -183,6 +183,12 @@ If you prefer shell wrappers, `scripts/train_vae.sh` and `scripts/train_diffusio
 
 Once training is finished, run inference:
 
+```bash
+python inference.py --config <path/to/inference.yaml>
+```
+
+For custom experiments or notebook-style integration, the core pipeline can also be loaded directly in Python:
+
 ```python
 import torch
 from diffusers import AutoencoderKL, DDPMScheduler, UNet2DConditionModel, UniPCMultistepScheduler
