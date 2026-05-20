@@ -285,6 +285,8 @@ Make sure the demo points to valid local checkpoints and dataset paths before op
 
 **🚨 We strongly recommend visiting our [project website](https://salad-pan.github.io/) for a better reading experience.**
 
+The tables below summarize reduced-resolution benchmarks across WV3, QB, and GF2, while the figures highlight both reduced- and full-resolution visual comparisons.
+
 ### Quantitative Results
 
 <p><b>Table 1.</b> Quantitative results on the WorldView-3 (WV3) dataset. Best results are in <b>bold</b>.</p>
