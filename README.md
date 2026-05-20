@@ -143,6 +143,10 @@ Dataset preparation details are documented in [`data/README.md`](data/README.md)
 
 ## Repository Layout
 
+- `train_vae.py`: Stage-I Band-VAE training entry point.
+- `train_diffusion.py`: Stage-II diffusion + adapter training entry point.
+- `inference.py`: offline inference and evaluation script for H5 datasets.
+- `app.py`: Gradio demo for interactive experimentation.
 - `configs/`: training and inference YAML configurations.
 - `core/`: project model components and diffusion pipeline implementation.
 - `utils/`: data prep and metric utilities.
