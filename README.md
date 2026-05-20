@@ -74,6 +74,7 @@ CC-Pan is a diffusion-based pan-sharpening framework that compresses multispectr
 - [Reproducibility](#reproducibility)
 - [FAQ](#faq)
 - [Contributing](#contributing)
+- [Maintenance](#maintenance)
 - [License](#license)
 - [Citation](#citation)
 - [Shoutouts](#shoutouts)
@@ -438,6 +439,10 @@ PanCollection-style H5 files with `gt`, `lms`, and `pan` keys are expected by th
 ## Contributing
 
 Documentation fixes, setup clarifications, and reproducibility improvements are welcome. When preparing changes, keep paths explicit, describe any dataset assumptions, and mention whether your notes target training, inference, or the demo workflow.
+
+## Maintenance
+
+When updating the project, keep the README in sync with checkpoint filenames, expected directory names, and any CLI arguments exposed by `train_vae.py`, `train_diffusion.py`, `inference.py`, or `app.py`.
 
 ## License
 
