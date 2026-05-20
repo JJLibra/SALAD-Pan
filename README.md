@@ -65,12 +65,20 @@ CC-Pan is a diffusion-based pan-sharpening framework that compresses multispectr
 ## Contents
 
 - [At a Glance](#at-a-glance)
+- [Quick Start](#quick-start)
 - [Setup](#setup)
 - [Usage](#usage)
 - [Repository Layout](#repository-layout)
 - [Results](#results)
 - [Citation](#citation)
 - [Shoutouts](#shoutouts)
+
+## Quick Start
+
+1. Clone the repository and install the editable local `diffusers` package.
+2. Download the Stable Diffusion base model together with the CC-Pan VAE and adapter checkpoints.
+3. Prepare PanCollection-style H5 datasets and point your YAML configs to those local paths.
+4. Launch Stage-I VAE training, then Stage-II diffusion training, and finally run `inference.py` for evaluation.
 
 ## Setup
 
