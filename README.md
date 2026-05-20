@@ -127,6 +127,16 @@ We provide **two-stage checkpoints**:
   - **Adapters**: `checkpoints/adapters.pth`
     Download: [Hugging Face](https://huggingface.co/xxfer/CC-Pan)
 
+Expected local layout after downloading:
+
+```text
+base/
+  stable-diffusion-v1-5/
+checkpoints/
+  vae.safetensors
+  adapters.pth
+```
+
 ## Repository Layout
 
 - `configs/`: training and inference YAML configurations.
