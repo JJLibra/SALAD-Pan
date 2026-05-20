@@ -205,6 +205,8 @@ Once training is finished, run inference:
 python inference.py --config <path/to/inference.yaml>
 ```
 
+Common inference fields to review are `input_h5_paths`, `input_h5_names`, `inference_count`, `save_pred_h5`, `save_visual_rgb`, and `save_metrics_jsonl`.
+
 For custom experiments or notebook-style integration, the core pipeline can also be loaded directly in Python:
 
 ```python
