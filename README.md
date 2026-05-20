@@ -39,6 +39,8 @@ for Efficient Pan-Sharpening
   <em>Given a PAN–LRMS image pair, CC-Pan fine-tunes a pre-trained diffusion model to generate a HRMS image.</em>
 </p>
 
+CC-Pan is a diffusion-based pan-sharpening framework that compresses multispectral channels into a compact latent space and reconstructs high-resolution multispectral imagery with a lightweight dual-branch adapter. This repository includes the training pipeline, offline inference entry points, checkpoint layout, and the Gradio demo used to reproduce the paper workflow.
+
 <!-- ## Demo
 
 <p align="center">
