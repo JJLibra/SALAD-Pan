@@ -195,6 +195,8 @@ If you prefer shell wrappers, `scripts/train_vae.sh` and `scripts/train_diffusio
 
 > Note: Training usually takes `40k–50k` steps, which is about `1–2` days on eight RTX 4090 GPUs in fp16. Reduce `batch_size` if your GPU memory is limited.
 
+In practice, Stage-I validation is often organized around GF2/QB/WV3 splits, while Stage-II can consume multiple training and validation H5 files through list-style YAML entries.
+
 ### Inference
 
 Once training is finished, run inference:
