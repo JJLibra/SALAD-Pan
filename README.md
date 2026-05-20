@@ -112,6 +112,8 @@ Or use a default Accelerate configuration without answering environment question
 accelerate config default
 ```
 
+For single-GPU runs, review `configs/accelerate.yaml` and adjust fields such as `gpu_ids`, `num_processes`, and `mixed_precision` to match your machine.
+
 ### Weights
 
 We provide **two-stage checkpoints**:
