@@ -161,16 +161,18 @@ Dataset preparation details are documented in [`data/README.md`](data/README.md)
 
 We train the model in **two stages**.
 
+Pass your dataset- and path-specific YAML file through `--config` for both stages.
+
 - **Stage I (VAE pretraining)**
 
 ```bash
-accelerate launch --config_file configs/accelerate.yaml train_vae.py --config configs/train_vae.yaml
+accelerate launch --config_file configs/accelerate.yaml train_vae.py --config <path/to/train_vae.yaml>
 ```
 
 - **Stage II (Diffusion + Adapter training)**
 
 ```bash
-accelerate launch --config_file configs/accelerate.yaml train_diffusion.py --config configs/train_diffusion.yaml
+accelerate launch --config_file configs/accelerate.yaml train_diffusion.py --config <path/to/train_diffusion.yaml>
 ```
 
 > Note: Training usually takes `40k–50k` steps, which is about `1–2` days on eight RTX 4090 GPUs in fp16. Reduce `batch_size` if your GPU memory is limited.
