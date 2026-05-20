@@ -171,6 +171,8 @@ Dataset preparation details are documented in [`data/README.md`](data/README.md)
 
 Before launching experiments, double-check that your YAML files point to the correct base model directory, checkpoint files, dataset H5 files, and output directory.
 
+All main scripts also accept repeated `-o key=value` overrides, which is useful for changing a few paths or runtime options without duplicating full YAML files.
+
 ### Training
 
 We train the model in **two stages**.
