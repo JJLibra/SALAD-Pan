@@ -264,6 +264,8 @@ image = pipe(
 image.save("cc_pan_demo.png")
 ```
 
+In real use, replace the random `conditioning` tensor with the aligned LRMS/PAN input pair and adapt the text prompt to the target sensor or band description used by your config.
+
 Installing [xformers](https://github.com/facebookresearch/xformers) is highly recommended for better GPU efficiency and speed.
 To enable it, set `enable_xformers_memory_efficient_attention=True`.
 
