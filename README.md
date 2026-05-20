@@ -165,6 +165,8 @@ Dataset preparation details are documented in [`data/README.md`](data/README.md)
 
 ## Usage
 
+Before launching experiments, double-check that your YAML files point to the correct base model directory, checkpoint files, dataset H5 files, and output directory.
+
 ### Training
 
 We train the model in **two stages**.
