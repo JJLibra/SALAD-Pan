@@ -137,6 +137,10 @@ checkpoints/
   adapters.pth
 ```
 
+### Datasets
+
+Dataset preparation details are documented in [`data/README.md`](data/README.md). The training and evaluation pipeline expects PanCollection-style H5 files for sensors such as GF2, QB, and WV3, plus the merged `data/vae/train_gt_1ch_all.h5` file used by Stage-I VAE training.
+
 ## Repository Layout
 
 - `configs/`: training and inference YAML configurations.
