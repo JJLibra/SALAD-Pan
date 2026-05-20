@@ -98,6 +98,8 @@ cd ..
 pip install -r requirements.txt
 ```
 
+If you plan to train or evaluate on GPU, installing an `xformers` build compatible with your local PyTorch/CUDA stack is recommended for better memory efficiency.
+
 Initialize an [🤗 Accelerate](https://github.com/huggingface/accelerate/) environment with:
 
 ```bash
