@@ -68,6 +68,7 @@ CC-Pan is a diffusion-based pan-sharpening framework that compresses multispectr
 - [Quick Start](#quick-start)
 - [Setup](#setup)
 - [Usage](#usage)
+- [Demo](#demo)
 - [Repository Layout](#repository-layout)
 - [Results](#results)
 - [FAQ](#faq)
@@ -261,6 +262,16 @@ Installing [xformers](https://github.com/facebookresearch/xformers) is highly re
 To enable it, set `enable_xformers_memory_efficient_attention=True`.
 
 Depending on your inference config, `inference.py` can save predicted H5 files, RGB previews, and per-sample metric logs, which makes it suitable for both benchmarking and qualitative inspection.
+
+## Demo
+
+To launch the interactive Gradio demo locally:
+
+```bash
+python app.py
+```
+
+Make sure the demo points to valid local checkpoints and dataset paths before opening it in a browser.
 
 ## Results
 
