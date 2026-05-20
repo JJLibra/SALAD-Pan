@@ -76,6 +76,13 @@ CC-Pan is a diffusion-based pan-sharpening framework that compresses multispectr
 
 ### Requirements
 
+Before installation, make sure you have:
+
+- Git access for cloning the repository.
+- A Conda environment with Python 3.10 available locally.
+- A CUDA-capable PyTorch runtime that matches your GPU driver.
+- Enough local disk space for the Stable Diffusion base model, training checkpoints, and H5 datasets.
+
 ```shell
 git clone https://github.com/JJLibra/CC-Pan.git
 cd CC-Pan
