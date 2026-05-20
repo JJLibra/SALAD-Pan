@@ -72,6 +72,7 @@ CC-Pan is a diffusion-based pan-sharpening framework that compresses multispectr
 - [Results](#results)
 - [FAQ](#faq)
 - [Contributing](#contributing)
+- [License](#license)
 - [Citation](#citation)
 - [Shoutouts](#shoutouts)
 
@@ -410,6 +411,10 @@ PanCollection-style H5 files with `gt`, `lms`, and `pan` keys are expected by th
 ## Contributing
 
 Documentation fixes, setup clarifications, and reproducibility improvements are welcome. When preparing changes, keep paths explicit, describe any dataset assumptions, and mention whether your notes target training, inference, or the demo workflow.
+
+## License
+
+This project is released under the MIT License. See [`LICENSE`](LICENSE) for the full text.
 
 ## Citation
 
