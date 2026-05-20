@@ -55,8 +55,16 @@ CC-Pan is a diffusion-based pan-sharpening framework that compresses multispectr
 <!-- - [04/30/2026] Pre-trained CC-Pan models are available on [Hugging Face Library](https://huggingface.co/xxfer/CC-Pan)! -->
 <!-- - [05/01/2026] Code released! -->
 
+## At a Glance
+
+- **Task**: pan-sharpening from a PAN image and a low-resolution multispectral image.
+- **Training stages**: a 1-channel Band-VAE pretraining stage followed by latent diffusion + adapter tuning.
+- **Main entry points**: `train_vae.py`, `train_diffusion.py`, `inference.py`, and `app.py`.
+- **Local assets**: the repository expects local base-model files, checkpoints, and H5 datasets under the documented directory layout.
+
 ## Contents
 
+- [At a Glance](#at-a-glance)
 - [Setup](#setup)
 - [Usage](#usage)
 - [Repository Layout](#repository-layout)
