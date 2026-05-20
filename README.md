@@ -71,6 +71,7 @@ CC-Pan is a diffusion-based pan-sharpening framework that compresses multispectr
 - [Repository Layout](#repository-layout)
 - [Results](#results)
 - [FAQ](#faq)
+- [Contributing](#contributing)
 - [Citation](#citation)
 - [Shoutouts](#shoutouts)
 
@@ -405,6 +406,10 @@ Because the exact dataset paths, checkpoint locations, and output directories de
 
 **What input format does offline evaluation expect?**  
 PanCollection-style H5 files with `gt`, `lms`, and `pan` keys are expected by the default pipeline.
+
+## Contributing
+
+Documentation fixes, setup clarifications, and reproducibility improvements are welcome. When preparing changes, keep paths explicit, describe any dataset assumptions, and mention whether your notes target training, inference, or the demo workflow.
 
 ## Citation
 
