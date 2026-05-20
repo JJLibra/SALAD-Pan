@@ -417,6 +417,7 @@ The tables below summarize reduced-resolution benchmarks across WV3, QB, and GF2
 | **CC-Pan**           | **4.198±0.526** | **3.251±0.288** |   20 | **3.36±0.07** |
 
 > Latency is reported as mean ± std over 10 runs (warmup = 3), with batch size = 1, evaluated on the QB dataset under the reduced-resolution (RR) protocol on an RTX 4090 GPU.
+> NFE denotes the number of function evaluations during sampling, so lower values generally correspond to faster diffusion inference.
 
 ## FAQ
 
