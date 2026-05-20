@@ -39,6 +39,8 @@ for Efficient Pan-Sharpening
   <em>Given a PAN–LRMS image pair, CC-Pan fine-tunes a pre-trained diffusion model to generate a HRMS image.</em>
 </p>
 
+CC-Pan is a diffusion-based pan-sharpening framework that compresses multispectral channels into a compact latent space and reconstructs high-resolution multispectral imagery with a lightweight dual-branch adapter. This repository includes the training pipeline, offline inference entry points, checkpoint layout, and the Gradio demo used to reproduce the paper workflow.
+
 <!-- ## Demo
 
 <p align="center">
@@ -53,18 +55,47 @@ for Efficient Pan-Sharpening
 <!-- - [04/30/2026] Pre-trained CC-Pan models are available on [Hugging Face Library](https://huggingface.co/xxfer/CC-Pan)! -->
 <!-- - [05/01/2026] Code released! -->
 
+## At a Glance
+
+- **Task**: pan-sharpening from a PAN image and a low-resolution multispectral image.
+- **Training stages**: a 1-channel Band-VAE pretraining stage followed by latent diffusion + adapter tuning.
+- **Main entry points**: `train_vae.py`, `train_diffusion.py`, `inference.py`, and `app.py`.
+- **Local assets**: the repository expects local base-model files, checkpoints, and H5 datasets under the documented directory layout.
+
 ## Contents
 
+- [At a Glance](#at-a-glance)
+- [Quick Start](#quick-start)
 - [Setup](#setup)
 - [Usage](#usage)
+- [Demo](#demo)
 - [Repository Layout](#repository-layout)
 - [Results](#results)
+- [Reproducibility](#reproducibility)
+- [FAQ](#faq)
+- [Contributing](#contributing)
+- [Maintenance](#maintenance)
+- [License](#license)
 - [Citation](#citation)
 - [Shoutouts](#shoutouts)
+
+## Quick Start
+
+1. Clone the repository and install the editable local `diffusers` package.
+2. Download the Stable Diffusion base model together with the CC-Pan VAE and adapter checkpoints.
+3. Prepare PanCollection-style H5 datasets and point your YAML configs to those local paths.
+4. Launch Stage-I VAE training, then Stage-II diffusion training, and finally run `inference.py` for evaluation.
 
 ## Setup
 
 ### Requirements
+
+Before installation, make sure you have:
+
+- Git access for cloning the repository.
+- A Conda environment with Python 3.10 available locally.
+- A CUDA-capable PyTorch runtime that matches your GPU driver.
+- Enough local disk space for the Stable Diffusion base model, training checkpoints, and H5 datasets.
 
 ```shell
 git clone https://github.com/JJLibra/CC-Pan.git
@@ -81,6 +112,8 @@ cd ..
 pip install -r requirements.txt
 ```
 
+If you plan to train or evaluate on GPU, installing an `xformers` build compatible with your local PyTorch/CUDA stack is recommended for better memory efficiency.
+
 Initialize an [🤗 Accelerate](https://github.com/huggingface/accelerate/) environment with:
 
 ```bash
@@ -92,6 +125,8 @@ Or use a default Accelerate configuration without answering environment question
 ```bash
 accelerate config default
 ```
+
+For single-GPU runs, review `configs/accelerate.yaml` and adjust fields such as `gpu_ids`, `num_processes`, and `mixed_precision` to match your machine.
 
 ### Weights
 
@@ -106,8 +141,26 @@ We provide **two-stage checkpoints**:
   - **Adapters**: `checkpoints/adapters.pth`
     Download: [Hugging Face](https://huggingface.co/xxfer/CC-Pan)
 
+Expected local layout after downloading:
+
+```text
+base/
+  stable-diffusion-v1-5/
+checkpoints/
+  vae.safetensors
+  adapters.pth
+```
+
+### Datasets
+
+Dataset preparation details are documented in [`data/README.md`](data/README.md). The training and evaluation pipeline expects PanCollection-style H5 files for sensors such as GF2, QB, and WV3, plus the merged `data/vae/train_gt_1ch_all.h5` file used by Stage-I VAE training.
+
 ## Repository Layout
 
+- `train_vae.py`: Stage-I Band-VAE training entry point.
+- `train_diffusion.py`: Stage-II diffusion + adapter training entry point.
+- `inference.py`: offline inference and evaluation script for H5 datasets.
+- `app.py`: Gradio demo for interactive experimentation.
 - `configs/`: training and inference YAML configurations.
 - `core/`: project model components and diffusion pipeline implementation.
 - `utils/`: data prep and metric utilities.
@@ -118,27 +171,45 @@ We provide **two-stage checkpoints**:
 
 ## Usage
 
+Before launching experiments, double-check that your YAML files point to the correct base model directory, checkpoint files, dataset H5 files, and output directory.
+
+All main scripts also accept repeated `-o key=value` overrides, which is useful for changing a few paths or runtime options without duplicating full YAML files.
+
 ### Training
 
 We train the model in **two stages**.
 
+Pass your dataset- and path-specific YAML file through `--config` for both stages.
+
 - **Stage I (VAE pretraining)**
 
 ```bash
-accelerate launch --config_file configs/accelerate.yaml train_vae.py --config configs/train_vae.yaml
+accelerate launch --config_file configs/accelerate.yaml train_vae.py --config <path/to/train_vae.yaml>
 ```
 
 - **Stage II (Diffusion + Adapter training)**
 
 ```bash
-accelerate launch --config_file configs/accelerate.yaml train_diffusion.py --config configs/train_diffusion.yaml
+accelerate launch --config_file configs/accelerate.yaml train_diffusion.py --config <path/to/train_diffusion.yaml>
 ```
 
+If you prefer shell wrappers, `scripts/train_vae.sh` and `scripts/train_diffusion.sh` mirror the same two-stage workflow.
+
 > Note: Training usually takes `40k–50k` steps, which is about `1–2` days on eight RTX 4090 GPUs in fp16. Reduce `batch_size` if your GPU memory is limited.
+
+In practice, Stage-I validation is often organized around GF2/QB/WV3 splits, while Stage-II can consume multiple training and validation H5 files through list-style YAML entries.
 
 ### Inference
 
 Once training is finished, run inference:
+
+```bash
+python inference.py --config <path/to/inference.yaml>
+```
+
+Common inference fields to review are `input_h5_paths`, `input_h5_names`, `inference_count`, `save_pred_h5`, `save_visual_rgb`, and `save_metrics_jsonl`.
+
+For custom experiments or notebook-style integration, the core pipeline can also be loaded directly in Python:
 
 ```python
 import torch
@@ -195,12 +266,28 @@ image = pipe(
 image.save("cc_pan_demo.png")
 ```
 
+In real use, replace the random `conditioning` tensor with the aligned LRMS/PAN input pair and adapt the text prompt to the target sensor or band description used by your config.
+
 Installing [xformers](https://github.com/facebookresearch/xformers) is highly recommended for better GPU efficiency and speed.
 To enable it, set `enable_xformers_memory_efficient_attention=True`.
+
+Depending on your inference config, `inference.py` can save predicted H5 files, RGB previews, and per-sample metric logs, which makes it suitable for both benchmarking and qualitative inspection.
+
+## Demo
+
+To launch the interactive Gradio demo locally:
+
+```bash
+python app.py
+```
+
+Make sure the demo points to valid local checkpoints and dataset paths before opening it in a browser.
 
 ## Results
 
 **🚨 We strongly recommend visiting our [project website](https://salad-pan.github.io/) for a better reading experience.**
+
+The tables below summarize reduced-resolution benchmarks across WV3, QB, and GF2, while the figures highlight both reduced- and full-resolution visual comparisons.
 
 ### Quantitative Results
 
@@ -332,6 +419,34 @@ To enable it, set `enable_xformers_memory_efficient_attention=True`.
 | **CC-Pan**           | **4.198±0.526** | **3.251±0.288** |   20 | **3.36±0.07** |
 
 > Latency is reported as mean ± std over 10 runs (warmup = 3), with batch size = 1, evaluated on the QB dataset under the reduced-resolution (RR) protocol on an RTX 4090 GPU.
+> NFE denotes the number of function evaluations during sampling, so lower values generally correspond to faster diffusion inference.
+
+## Reproducibility
+
+For reproducible experiments, record the exact YAML used for each stage, the `accelerate` launcher settings, the selected checkpoint files, and the git commit hash associated with each run.
+
+## FAQ
+
+**Do I need local Stable Diffusion weights?**  
+Yes. The training and inference code expects a local base model directory under `base/`.
+
+**Why do the training commands use `<path/to/...>.yaml` placeholders?**  
+Because the exact dataset paths, checkpoint locations, and output directories depend on your local setup.
+
+**What input format does offline evaluation expect?**  
+PanCollection-style H5 files with `gt`, `lms`, and `pan` keys are expected by the default pipeline.
+
+## Contributing
+
+Documentation fixes, setup clarifications, and reproducibility improvements are welcome. When preparing changes, keep paths explicit, describe any dataset assumptions, and mention whether your notes target training, inference, or the demo workflow.
+
+## Maintenance
+
+When updating the project, keep the README in sync with checkpoint filenames, expected directory names, and any CLI arguments exposed by `train_vae.py`, `train_diffusion.py`, `inference.py`, or `app.py`.
+
+## License
+
+This project is released under the MIT License. See [`LICENSE`](LICENSE) for the full text.
 
 ## Citation
 
