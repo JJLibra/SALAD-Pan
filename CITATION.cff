@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as follows."
+title: "CC-Pan"
+type: software
+authors:
+  - family-names: Li
+    given-names: Junjie
+  - family-names: Ou
+    given-names: Congyang
+  - family-names: Zhang
+    given-names: Haokui
+  - family-names: Wei
+    given-names: Guoting
+  - family-names: Jiang
+    given-names: Shengqin
+  - family-names: Li
+    given-names: Ying
+abstract: "CC-Pan is a diffusion-based pan-sharpening framework for generating high-resolution multispectral imagery from PAN and LRMS inputs."
+repository-code: "https://github.com/JJLibra/CC-Pan"
+url: "https://github.com/JJLibra/CC-Pan"
+license: MIT
+version: 1.0.0
+date-released: 2026-05-21
+keywords:
+  - remote sensing
+  - pan-sharpening
+  - diffusion model
+  - image fusion
